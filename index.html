@@ -155,27 +155,7 @@ details p{font-weight:400;color:var(--mut);margin-top:6px;font-size:13px}
   <div class="pad" style="padding-top:14px;padding-bottom:90px;display:flex;flex-direction:column;gap:10px">
     <div class="card row"><span style="color:var(--green)" data-i="check"></span><b style="flex:1">الحساب مسجّل على قاعدة البيانات</b></div>
     <a class="btn o" href="captain.html" style="text-decoration:none">🚕 دخول الكابتن (برقم سري)</a>
-    <button class="btn" id="toAdmin"><span data-i="shield"></span>لوحة الإدارة</button>
     <button class="btn o" id="logout" style="color:var(--red)">تغيير الحساب</button></div></section>
-
-<section class="scr" id="admin" style="padding-bottom:24px"><div class="hd" style="padding-bottom:24px"><div class="row"><button class="rd" id="aback" style="background:rgba(255,255,255,.2)" data-i="arrow"></button><h2>لوحة الإدارة</h2></div></div>
-  <div class="pad" style="padding-top:14px;display:flex;flex-direction:column;gap:12px">
-    <div class="card" style="display:flex;flex-direction:column;gap:10px"><b>التسعيرة (بالجنيه)</b>
-      <label class="mut">سعر الكيلومتر</label><input class="in ai" id="a_km" type="number" min="0" step="0.5" inputmode="decimal">
-      <label class="mut">سعر دقيقة الانتظار</label><input class="in ai" id="a_wait" type="number" min="0" step="0.5" inputmode="decimal">
-      <label class="mut">رسوم انتقال الكابتن من مكانه للعميل</label><input class="in ai" id="a_pick" type="number" min="0" step="1" inputmode="decimal">
-      <label class="mut">الحد الأدنى للرحلة</label><input class="in ai" id="a_min" type="number" min="0" step="1" inputmode="decimal">
-      <div class="row sp" style="background:var(--pale);border-radius:12px;padding:10px"><span class="mut">مثال: رحلة 10 كم بدون انتظار</span><b id="prev" style="font-size:18px"></b></div></div>
-    <div class="card" style="display:flex;flex-direction:column;gap:10px"><b>بيانات الكابتن (كابتن واحد)</b>
-      <label class="mut">الاسم</label><input class="in" id="a_name">
-      <label class="mut">العربية</label><input class="in" id="a_car">
-      <label class="mut">رقم اللوحة</label><input class="in" id="a_plate">
-      <label class="mut">رقم الموبايل</label><input class="in" id="a_phone" dir="ltr" style="text-align:right"></div>
-    <div class="card" style="display:flex;flex-direction:column;gap:10px"><b>رمز الإدارة</b>
-      <label class="mut">الرمز الحالي (مطلوب للحفظ)</label><input class="in" id="a_pin" type="password" inputmode="numeric" autocomplete="off" dir="ltr" style="text-align:right">
-      <label class="mut">رمز جديد (اختياري، 4 أرقام أو أكتر)</label><input class="in" id="a_newpin" type="password" inputmode="numeric" autocomplete="off" dir="ltr" style="text-align:right"></div>
-    <div class="err" id="aerr"></div>
-    <button class="btn" id="asave">حفظ التغييرات</button></div></section>
 
 <nav class="nav" id="nav" style="display:none">
   <button data-t="home" class="on"><span data-i="home"></span>الرئيسية</button>
@@ -201,14 +181,14 @@ $$('[data-logo]').forEach(e=>e.innerHTML=logoSVG);
 $$('[data-i]').forEach(e=>e.innerHTML=ic(e.dataset.i));
 
 const ls={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
-let S=Object.assign({km:8,wait:1.5,pick:15,min:30,name:"محمود السيد",car:"هيونداي النترا – أبيض",plate:"أ ب ج 1234",phone:"01012345678"},ls.get('mw',{}));
+let S=Object.assign({km:8,wait:1.5,pick:15,min:30},ls.get('mw',{}));
 let CU=ls.get('mw_cust',null),pm='cash',W=0,RD={km:0,min:0},addr={pick:'',dest:''};
 const calc=()=>RD.km?Math.max(S.min,Math.round(S.pick+RD.km*S.km+W*S.wait)):0;
 async function loadSettings(){
   try{
     const {data,error}=await sb.from('app_settings').select('*').eq('id',1).single();
     if(error||!data)throw error;
-    S={km:+data.km_price,wait:+data.wait_price,pick:+data.pickup_fee,min:+data.min_fare,name:data.captain_name,car:data.captain_car,plate:data.captain_plate,phone:data.captain_phone};
+    S={km:+data.km_price,wait:+data.wait_price,pick:+data.pickup_fee,min:+data.min_fare};
     ls.set('mw',S);
   }catch(e){}
   updInfo();
@@ -389,7 +369,7 @@ $('#pay').onclick=e=>{const k=e.target.closest('[data-p]');if(!k)return;pm=k.dat
 /* ===== الطلب والتتبع (عبر قاعدة البيانات) ===== */
 let RID=ls.get('mw_ride',null),RATE_ID=null,poll=null,lastSt=null,trackBuilt=false,drv=null;
 const stopPoll=()=>{clearInterval(poll);poll=null};
-const ERR={busy:'الكابتن مشغول في رحلة دلوقتي، جرّب بعد شوية',offline:'الكابتن مش متاح حالياً، جرّب بعد شوية',no_customer:'بياناتك مش موجودة، من حسابي اختار تغيير الحساب وسجّل تاني',bad_input:'بيانات الرحلة مش مظبوطة، حدد الأماكن تاني'};
+const ERR={busy:'كل الكباتن مشغولين في رحلات دلوقتي، جرّب بعد شوية',already_open:'عندك رحلة شغالة بالفعل',offline:'الكابتن مش متاح حالياً، جرّب بعد شوية',no_customer:'بياناتك مش موجودة، من حسابي اختار تغيير الحساب وسجّل تاني',bad_input:'بيانات الرحلة مش مظبوطة، حدد الأماكن تاني'};
 $('#order').onclick=async()=>{
   $('#oerr').textContent='';$('#order').disabled=true;
   await loadSettings();
@@ -462,27 +442,6 @@ function renderTrips(){
   $('#tl').innerHTML=t.length?t.map(x=>`<div class="card row"><span style="color:var(--red)">${ic('pin')}</span><div style="flex:1;min-width:0"><b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" class="tt"></b><div class="mut">${x.date}</div></div><div style="text-align:left"><b>${x.fare} ج.م</b><div class="mut">${x.pay==='cash'?'كاش':'كارت'}</div></div></div>`).join(''):'<div class="card mut" style="text-align:center;padding:30px">لسه معملتش أي رحلة</div>';
   $$('#tl .tt').forEach((e,i)=>e.textContent=t[i].to||'وجهة');
 }
-
-/* ===== الإدارة ===== */
-const AF=['km','wait','pick','min'],AS=['name','car','plate','phone'];
-function prev(){const g=k=>+$('#a_'+k).value||0;$('#prev').textContent=Math.max(g('min'),Math.round(g('pick')+10*g('km')))+' ج.م'}
-$$('.ai').forEach(e=>e.oninput=prev);
-$('#toAdmin').onclick=async()=>{await loadSettings();[...AF,...AS].forEach(k=>$('#a_'+k).value=S[k]);$('#a_pin').value='';$('#a_newpin').value='';$('#aerr').textContent='';prev();show('admin')};
-$('#aback').onclick=()=>show('profile');
-$('#asave').onclick=async()=>{
-  const b=$('#asave'),g=k=>Math.max(0,+$('#a_'+k).value||0),t=k=>$('#a_'+k).value.trim();
-  $('#aerr').textContent='';
-  if(!$('#a_pin').value){$('#aerr').textContent='اكتب رمز الإدارة الأول';return}
-  b.disabled=true;b.textContent='جاري الحفظ...';
-  try{
-    const {data,error}=await sb.rpc('update_settings',{p_pin:$('#a_pin').value,p_km:g('km'),p_wait:g('wait'),p_pick:g('pick'),p_min:g('min'),p_name:t('name')||S.name,p_car:t('car')||S.car,p_plate:t('plate')||S.plate,p_phone:t('phone')||S.phone,p_new_pin:$('#a_newpin').value||null});
-    if(error)throw error;
-    if(data==='bad_pin'){$('#aerr').textContent='الرمز غلط'}
-    else if(data==='locked'){$('#aerr').textContent='اتقفل مؤقتاً 5 دقايق بسبب محاولات غلط'}
-    else if(data==='ok'){await loadSettings();$('#a_pin').value='';$('#a_newpin').value='';b.textContent='تم الحفظ في قاعدة البيانات ✓';setTimeout(()=>b.textContent='حفظ التغييرات',1800);b.disabled=false;return}
-  }catch(e){$('#aerr').textContent='تعذّر الحفظ، اتأكد من النت'}
-  b.disabled=false;b.textContent='حفظ التغييرات';
-};
 
 /* ===== التشغيل ===== */
 setTimeout(()=>CU?boot():show('login'),1700);
