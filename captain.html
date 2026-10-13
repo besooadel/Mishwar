@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>مشوار – الكابتن</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12345A">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#0878F9;--navy:#12345A;--yellow:#FFC928;--bg:#F4F7FB;--card:#fff;--bd:#E4EBF4;--green:#13B981;--red:#F04444;--mut:#7B8CA3;--pale:#FFF6D9}
+@media (prefers-color-scheme:dark){:root{--bg:#0B1A2E;--card:#12253F;--bd:#223859;--navy:#EAF1FB;--mut:#8DA2BF;--pale:#3A3112}}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--bg);font-family:'Cairo',Tahoma,Arial,sans-serif;color:var(--navy);display:flex;justify-content:center}
+#app{width:100%;max-width:430px;min-height:100%;padding:env(safe-area-inset-top,0px) 0 calc(24px + env(safe-area-inset-bottom,0px))}
+.hd{background:linear-gradient(160deg,#12345A,#0B2340);color:#fff;padding:16px 18px 26px;border-radius:0 0 28px 28px}
+.row{display:flex;align-items:center;gap:10px}.sp{justify-content:space-between}
+.logo{width:42px;height:42px;border-radius:13px;background:var(--yellow);display:grid;place-items:center}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:16px;box-shadow:0 6px 18px rgba(18,52,90,.07)}
+.pad{padding:0 16px}
+.btn{width:100%;border:0;border-radius:18px;background:var(--yellow);color:#12345A;font:800 18px Cairo,sans-serif;padding:15px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 16px rgba(255,201,40,.4);cursor:pointer;text-decoration:none}
+.btn:active{transform:scale(.97)}.btn:disabled{opacity:.5}
+.btn.o{background:var(--card);border:1.5px solid var(--bd);box-shadow:none;color:var(--navy)}
+.btn.g{background:var(--green);color:#fff;box-shadow:none}
+.btn.r{background:var(--card);border:1.5px solid var(--red);color:var(--red);box-shadow:none}
+.in{width:100%;border:1.5px solid var(--bd);background:var(--bg);border-radius:14px;padding:13px;font:600 18px Cairo,sans-serif;color:var(--navy);outline:0;text-align:center;letter-spacing:6px}
+.mut{color:var(--mut);font-size:13px}
+.err{color:var(--red);font-weight:700;font-size:13px;min-height:18px;text-align:center}
+.sw{width:64px;height:34px;border-radius:99px;background:#5b6e88;position:relative;border:0;cursor:pointer;flex:none;transition:.2s}
+.sw::after{content:'';position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;background:#fff;transition:.2s}
+.sw.on{background:var(--green)}.sw.on::after{right:34px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.pt{display:flex;gap:10px;align-items:flex-start}
+.dot{width:14px;height:14px;border-radius:50%;margin-top:5px;flex:none}
+.big{font-size:30px;font-weight:800}
+.pulse{width:96px;height:96px;border-radius:50%;background:rgba(19,185,129,.15);display:grid;place-items:center;margin:0 auto;animation:p 1.6s infinite}
+@keyframes p{0%{box-shadow:0 0 0 0 rgba(19,185,129,.4)}100%{box-shadow:0 0 0 40px rgba(19,185,129,0)}}
+.ring{animation:ring 1s infinite}
+@keyframes ring{50%{box-shadow:0 0 0 6px rgba(255,201,40,.55)}}
+.tag{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- دخول الكابتن -->
+<section id="login" class="hide">
+  <div class="hd"><div class="row"><div class="logo" id="lg"></div><b style="font-size:22px">مشوار – الكابتن</b></div><p style="margin-top:16px;opacity:.85">اكتب رمز الكابتن عشان تستقبل الرحلات</p></div>
+  <div class="pad stack" style="margin-top:-12px">
+    <div class="card stack"><input class="in" id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="••••••" dir="ltr">
+      <div class="err" id="lerr"></div><button class="btn" id="enter">دخول</button></div>
+  </div>
+</section>
+
+<!-- الشاشة الرئيسية -->
+<section id="main" class="hide">
+  <div class="hd"><div class="row sp"><div class="row"><div class="logo" id="lg2"></div><div><b style="font-size:19px">أهلاً يا كابتن</b><div style="font-size:13px;opacity:.85" id="stt">غير متاح</div></div></div>
+    <div class="row"><span style="font-size:13px" id="swl">متاح</span><button class="sw" id="sw" aria-label="متاح"></button></div></div></div>
+  <div class="pad stack" style="margin-top:-12px" id="body"></div>
+  <div class="pad" style="margin-top:18px;display:flex;gap:10px"><button class="btn o" id="chpin" style="font-size:14px;padding:10px">تغيير الرمز</button><button class="btn o" id="out" style="font-size:14px;padding:10px;color:var(--red)">خروج</button></div>
+  <p class="mut" style="text-align:center;margin-top:12px;padding:0 16px">سيب الصفحة مفتوحة والشاشة شغالة عشان توصلك الطلبات</p>
+</section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const sb=supabase.createClient('https://wxqxsxgktmfqyvsbjruo.supabase.co','sb_publishable_PUh7gPslTu5eE9_ykekQpg_s1nZ8-N6');
+const $=s=>document.querySelector(s);
+const logo=`<svg viewBox="0 0 48 48" width="70%" height="70%" fill="none" stroke="#12345A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4a11 11 0 0111 11c0 8-11 17-11 17S13 23 13 15A11 11 0 0124 4z"/><path d="M17 17h14l-2-4h-10z" fill="#12345A"/><path d="M6 36h10M4 41h14M30 40h14"/></svg>`;
+$('#lg').innerHTML=$('#lg2').innerHTML=logo;
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+
+let PIN=ls.get('mw_cap_pin'),online=false,pos=null,timer=null,offset=0,ride=null,seen=new Set(),alarm=null,actx=null,wake=null,busy=false,done=null;
+
+/* ===== دخول ===== */
+function ui(){$('#login').classList.toggle('hide',!!PIN);$('#main').classList.toggle('hide',!PIN)}
+$('#enter').onclick=async()=>{
+  const p=$('#pin').value.trim();if(!p)return;
+  $('#lerr').textContent='';$('#enter').disabled=true;
+  const r=await poll(p,null);
+  $('#enter').disabled=false;
+  if(r&&r.status==='ok'){PIN=p;ls.set('mw_cap_pin',p);ui();start()}
+  else $('#lerr').textContent={bad_pin:'الرمز غلط',locked:'اتقفل 5 دقايق بسبب محاولات غلط'}[r&&r.status]||'تعذّر الاتصال، اتأكد من النت';
+};
+$('#out').onclick=async()=>{if(!confirm('تخرج؟ هتبقى غير متاح لاستقبال الرحلات'))return;if(!ride)await poll(PIN,false);ls.del('mw_cap_pin');PIN=null;clearInterval(timer);stopAlarm();ui()};
+$('#chpin').onclick=async()=>{
+  const n=prompt('اكتب الرمز الجديد (4 أرقام على الأقل)');if(!n)return;
+  const {data}=await sb.rpc('captain_set_pin',{p_old:PIN,p_new:n});
+  if(data==='ok'){PIN=n;ls.set('mw_cap_pin',n);alert('تم تغيير الرمز')}else alert(data==='too_short'?'الرمز قصير':'تعذّر التغيير');
+};
+
+/* ===== الاتصال بالقاعدة ===== */
+async function poll(pin,wantOnline){
+  try{
+    const {data,error}=await sb.rpc('captain_poll',{p_pin:pin,p_lat:pos?pos.lat:null,p_lng:pos?pos.lng:null,p_online:wantOnline});
+    if(error)throw error;return data;
+  }catch(e){console.warn(e);return null}
+}
+async function tick(want=null){
+  if(busy)return;busy=true;
+  const r=await poll(PIN,want);busy=false;
+  if(!r){$('#stt').textContent='لا يوجد اتصال...';return}
+  if(r.status!=='ok'){if(r.status==='bad_pin'){ls.del('mw_cap_pin');PIN=null;ui()}return}
+  offset=new Date(r.server_now).getTime()-Date.now();
+  online=r.online;ride=r.ride;
+  render();
+}
+function start(){
+  clearInterval(timer);tick();timer=setInterval(()=>tick(),3000);
+  if('geolocation' in navigator)navigator.geolocation.watchPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude}},()=>{},{enableHighAccuracy:true,maximumAge:5000});
+}
+$('#sw').onclick=async()=>{
+  initAudio();if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();
+  if(ride&&online){alert('عندك رحلة شغالة، خلّصها الأول');return}
+  await tick(!online);
+  try{if(online&&'wakeLock' in navigator)wake=await navigator.wakeLock.request('screen');else if(wake){wake.release();wake=null}}catch(e){}
+};
+document.addEventListener('visibilitychange',async()=>{if(!document.hidden&&online&&'wakeLock' in navigator){try{wake=await navigator.wakeLock.request('screen')}catch(e){}}});
+
+/* ===== تنبيه صوتي ===== */
+function initAudio(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(e){}}
+function beep(){
+  if(!actx)return;
+  [880,1100,880].forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;o.connect(g);g.connect(actx.destination);
+    const t=actx.currentTime+i*.22;g.gain.setValueAtTime(.35,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.start(t);o.stop(t+.2)});
+  if(navigator.vibrate)navigator.vibrate([300,120,300]);
+}
+function startAlarm(){if(alarm)return;beep();alarm=setInterval(beep,1800)}
+function stopAlarm(){clearInterval(alarm);alarm=null}
+function notify(t){try{if('Notification' in window&&Notification.permission==='granted')new Notification('مشوار',{body:t,tag:'ride',requireInteraction:true})}catch(e){}}
+
+/* ===== العرض ===== */
+const nav=(lat,lng)=>`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+const mmss=ms=>{const s=Math.max(0,Math.floor(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+function el(html){const d=document.createElement('div');d.innerHTML=html;return d.firstElementChild}
+function esc(t){const d=document.createElement('div');d.textContent=t==null?'':String(t);return d.innerHTML}
+function render(){
+  $('#sw').classList.toggle('on',online);$('#swl').textContent=online?'متاح':'غير متاح';
+  const b=$('#body');b.replaceChildren();
+  document.title=ride&&ride.status==='searching'?'🔔 طلب جديد!':'مشوار – الكابتن';
+  if(done){
+    b.append(el(`<div class="card stack" style="text-align:center"><div class="big" style="color:var(--green)">${esc(done.fare)} ج.م</div><b>الرحلة خلصت ✔</b><div class="mut">${done.pay_method==='cash'?'حصّل المبلغ كاش من العميل':'الدفع بالكارت'} · انتظار ${esc(done.wait_min)} دقيقة</div><button class="btn" id="ok">تمام</button></div>`));
+    $('#ok').onclick=()=>{done=null;render()};stopAlarm();$('#stt').textContent='خلّصت رحلة';return;
+  }
+  if(!ride){
+    stopAlarm();
+    $('#stt').textContent=online?'متاح لاستقبال الرحلات':'غير متاح';
+    b.append(el(online?`<div class="card stack" style="text-align:center"><div class="pulse"><span style="font-size:38px">🚕</span></div><b style="font-size:18px">مستني طلبات...</b><span class="mut">هيجيلك تنبيه صوتي أول ما حد يطلب</span></div>`
+      :`<div class="card stack" style="text-align:center"><span style="font-size:40px">😴</span><b style="font-size:18px">إنت غير متاح</b><span class="mut">فعّل زر "متاح" عشان تستقبل رحلات. العملاء مش هيقدروا يطلبوك وإنت غير متاح.</span></div>`));
+    return;
+  }
+  const r=ride,st=r.status;
+  const info=`<div class="card stack">
+    <div class="row sp"><div><b style="font-size:18px">${esc(r.customer_name)}</b><div class="mut" dir="ltr" style="text-align:right">${esc(r.customer_phone)}</div></div>
+      <a class="btn g" style="width:auto;padding:10px 16px;font-size:15px" href="tel:${esc(r.customer_phone)}">📞 اتصل</a></div>
+    <div class="pt"><span class="dot" style="background:var(--green)"></span><div><div class="mut">نقطة الانتقال</div><b>${esc(r.pickup_addr)||'—'}</b></div></div>
+    <div class="pt"><span class="dot" style="background:var(--red)"></span><div><div class="mut">الوجهة</div><b>${esc(r.dest_addr)||'—'}</b></div></div>
+    <div class="row sp" style="background:var(--bg);border-radius:14px;padding:10px"><div><div class="mut">المسافة</div><b>${esc(r.distance_km)} كم</b></div><div><div class="mut">التقدير</div><b>${esc(r.est_fare)} ج.م</b></div><div><div class="mut">الدفع</div><b>${r.pay_method==='cash'?'كاش':'كارت'}</b></div></div></div>`;
+  if(st==='searching'){
+    const left=Math.max(0,120-Math.floor((Date.now()+offset-new Date(r.created_at).getTime())/1000));
+    $('#stt').textContent='طلب جديد!';
+    if(!seen.has(r.id)){seen.add(r.id);notify('طلب رحلة جديد من '+r.customer_name)}
+    startAlarm();
+    const c=el(`<div class="stack"><div class="card ring" style="text-align:center;background:var(--pale);border-color:var(--yellow)"><b style="font-size:20px">🔔 طلب رحلة جديد</b><div class="mut">الطلب هينتهي خلال ${left} ثانية</div></div>${info}
+      <button class="btn" id="acc">قبول الرحلة</button><button class="btn r" id="rej">رفض</button></div>`);
+    b.append(c);$('#acc').onclick=()=>act('accept');$('#rej').onclick=()=>act('reject');return;
+  }
+  stopAlarm();
+  if(st==='accepted'){
+    $('#stt').textContent='في الطريق للعميل';
+    b.append(el(`<div class="stack">${info}<a class="btn o" target="_blank" rel="noopener" href="${nav(r.pickup_lat,r.pickup_lng)}">🧭 افتح الملاحة للعميل</a><button class="btn g" id="arr">وصلت للعميل</button><button class="btn r" id="can">إلغاء الرحلة</button></div>`));
+    $('#arr').onclick=()=>act('arrived');$('#can').onclick=()=>{if(confirm('تلغي الرحلة؟'))act('cancel')};return;
+  }
+  if(st==='arrived'){
+    $('#stt').textContent='مستني العميل';
+    const t=el(`<div class="stack">${info}<div class="card" style="text-align:center"><div class="mut">وقت الانتظار</div><div class="big" id="wt">00:00</div></div><button class="btn" id="go">بدء الرحلة</button><button class="btn r" id="can">إلغاء الرحلة</button></div>`);
+    b.append(t);const upd=()=>{const w=$('#wt');if(w&&ride&&ride.arrived_at)w.textContent=mmss(Date.now()+offset-new Date(ride.arrived_at).getTime())};upd();
+    $('#go').onclick=()=>act('start');$('#can').onclick=()=>{if(confirm('تلغي الرحلة؟'))act('cancel')};return;
+  }
+  if(st==='in_trip'){
+    $('#stt').textContent='الرحلة شغالة';
+    b.append(el(`<div class="stack">${info}<a class="btn o" target="_blank" rel="noopener" href="${nav(r.dest_lat,r.dest_lng)}">🧭 افتح الملاحة للوجهة</a><button class="btn" id="fin">إنهاء الرحلة</button></div>`));
+    $('#fin').onclick=()=>{if(confirm('وصلت للوجهة وتنهي الرحلة؟'))act('complete')};
+  }
+}
+setInterval(()=>{const w=$('#wt');if(w&&ride&&ride.arrived_at)w.textContent=mmss(Date.now()+offset-new Date(ride.arrived_at).getTime())},1000);
+async function act(a){
+  initAudio();stopAlarm();document.querySelectorAll('#body button').forEach(b=>b.disabled=true);
+  try{
+    const {data,error}=await sb.rpc('captain_action',{p_pin:PIN,p_ride:ride.id,p_action:a});
+    if(error)throw error;
+    if(data.status==='ok'&&a==='complete')done=data;
+    else if(data.status==='invalid_state')alert('حالة الرحلة اتغيّرت (ممكن العميل لغى الطلب)');
+  }catch(e){alert('تعذّر تنفيذ العملية، اتأكد من النت')}
+  tick();
+}
+
+/* ===== التشغيل ===== */
+ui();if(PIN){initAudio();start()}
+document.addEventListener('click',initAudio,{once:true});
+</script>
+</body>
+</html>
