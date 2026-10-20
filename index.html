@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>مشوار</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0878F9">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="مشوار">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--blue:#0878F9;--navy:#12345A;--yellow:#FFC928;--bg:#F4F7FB;--card:#fff;--bd:#E4EBF4;--green:#13B981;--red:#F04444;--purple:#7C3AED;--mut:#7B8CA3;--pale:#FFF6D9}
+@media (prefers-color-scheme:dark){:root{--bg:#0B1A2E;--card:#12253F;--bd:#223859;--navy:#EAF1FB;--mut:#8DA2BF;--pale:#3A3112}}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--bg);font-family:'Cairo',Tahoma,Arial,sans-serif;color:var(--navy);display:flex;justify-content:center}
+#app{width:100%;max-width:430px;height:100%;position:relative;overflow:hidden;background:var(--bg)}
+.scr{position:absolute;inset:0;display:none;flex-direction:column;overflow-y:auto;animation:in .3s;padding-top:env(safe-area-inset-top,0px)}
+.scr.on{display:flex}
+@keyframes in{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.hd{background:linear-gradient(160deg,#0878F9,#0560C9);color:#fff;padding:14px 18px 54px;border-radius:0 0 28px 28px}
+.row{display:flex;align-items:center;gap:10px}.sp{justify-content:space-between}
+.logo{width:44px;height:44px;border-radius:14px;background:var(--yellow);display:grid;place-items:center}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:14px;box-shadow:0 6px 18px rgba(18,52,90,.07)}
+.pad{padding:0 16px}
+.btn{width:100%;border:0;border-radius:18px;background:var(--yellow);color:#12345A;font:800 18px Cairo,sans-serif;padding:15px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 16px rgba(255,201,40,.45);cursor:pointer;transition:.15s}
+.btn:active{transform:scale(.97)}
+.btn:disabled{background:var(--bd);color:var(--mut);box-shadow:none;cursor:not-allowed}
+.btn.o{background:var(--card);border:1.5px solid var(--bd);box-shadow:none;color:var(--navy)}
+.in{width:100%;border:1.5px solid var(--bd);background:var(--bg);border-radius:14px;padding:13px;font:600 15px Cairo,sans-serif;color:var(--navy);outline:0}
+.in:focus{border-color:var(--blue)}
+.loc{display:flex;align-items:center;gap:10px;padding:8px;border-radius:14px;border:2px solid transparent;cursor:pointer}
+.loc.act{border-color:var(--yellow);background:var(--pale)}
+.loc+.loc{margin-top:4px}
+.loc b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.loc .t{flex:1;min-width:0}
+.nav{display:flex;background:var(--card);border-top:1px solid var(--bd);padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px));position:absolute;left:0;right:0;bottom:0;z-index:5}
+.nav button{flex:1;border:0;background:0;color:var(--mut);font:600 11px Cairo,sans-serif;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+.nav button.on{color:var(--blue)}
+.mut{color:var(--mut);font-size:12px}
+.g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.pay{display:flex;gap:8px}
+.pay div{flex:1;border:2px solid var(--bd);border-radius:14px;padding:9px;display:flex;gap:6px;justify-content:center;align-items:center;font-weight:700;font-size:14px;cursor:pointer}
+.pay .sel{border-color:var(--blue);color:var(--blue);background:rgba(8,120,249,.08)}
+.center{align-items:center;justify-content:center;text-align:center;gap:14px}
+.pulse{width:120px;height:120px;border-radius:50%;background:rgba(8,120,249,.15);display:grid;place-items:center;animation:p 1.4s infinite}
+@keyframes p{0%{box-shadow:0 0 0 0 rgba(8,120,249,.35)}100%{box-shadow:0 0 0 46px rgba(8,120,249,0)}}
+.stars{display:flex;gap:6px;justify-content:center;direction:ltr}
+.stars svg{width:40px;height:40px;color:var(--bd);cursor:pointer}
+.stars svg.on{color:var(--yellow);fill:var(--yellow)}
+details{border-bottom:1px solid var(--bd);padding:10px 0;font-weight:700;font-size:14px}
+details p{font-weight:400;color:var(--mut);margin-top:6px;font-size:13px}
+.av{width:54px;height:54px;border-radius:50%;background:var(--yellow);color:#12345A;display:grid;place-items:center;font-weight:800;font-size:22px;flex:none}
+.rd{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;border:0;color:#fff;background:var(--blue);cursor:pointer;flex:none}
+.mapbox{margin:12px 16px 0;border-radius:20px;overflow:hidden;border:1px solid var(--bd);position:relative;z-index:0;box-shadow:0 6px 18px rgba(18,52,90,.1)}
+.mapbox>div:first-child{height:270px;direction:ltr;z-index:0}
+.zm{position:absolute;left:8px;top:8px;display:flex;flex-direction:column;gap:6px;z-index:500}
+.zm b{width:36px;height:36px;border-radius:10px;background:var(--card);display:grid;place-items:center;color:var(--blue);box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer}
+.tag{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.err{color:var(--red);font-size:13px;font-weight:700;min-height:18px}
+.hint{background:var(--pale);border-radius:12px;padding:8px 12px;font-size:13px;font-weight:700;margin:10px 16px 0;display:flex;gap:8px;align-items:center}
+#sug:empty{display:none}
+.sg{display:flex;gap:10px;align-items:center;width:100%;text-align:right;border:0;border-top:1px solid var(--bd);background:transparent;padding:10px 12px;font:600 14px Cairo,sans-serif;color:var(--navy);cursor:pointer}
+.sg:first-child{border-top:0}.sg:active{background:var(--pale)}.sg small{display:block;color:var(--mut);font-weight:400;font-size:12px}.sg span{min-width:0}.sg svg{color:var(--red)}
+.hide{display:none!important}
+.leaflet-container{font-family:'Cairo',sans-serif}
+</style>
+</head>
+<body>
+<div id="app">
+
+<section class="scr on center" id="splash" style="background:linear-gradient(160deg,#0878F9,#0452B0);color:#fff">
+  <div class="logo" style="width:104px;height:104px;border-radius:30px" data-logo></div>
+  <h1 style="font-size:44px;font-weight:800">مشوار</h1>
+  <p style="font-weight:600;color:var(--yellow);font-size:18px">رحلتك أسهل .. وأسرع</p>
+</section>
+
+<!-- تسجيل لمرة واحدة -->
+<section class="scr" id="login">
+  <div class="hd" style="padding-bottom:40px"><div class="row"><div class="logo" data-logo></div><b style="font-size:22px">مشوار</b></div>
+    <h2 style="margin-top:22px;font-size:24px">أهلاً بيك 👋</h2><p style="opacity:.85">اكتب اسمك ورقمك مرة واحدة بس</p></div>
+  <div class="pad" style="margin-top:-24px;display:flex;flex-direction:column;gap:14px">
+    <div class="card" style="display:flex;flex-direction:column;gap:12px">
+      <label><b>الاسم</b></label><input class="in" id="nm" maxlength="60" placeholder="مثال: أحمد محمد" autocomplete="name">
+      <label><b>رقم الموبايل للتواصل</b></label><input class="in" id="ph" type="tel" inputmode="numeric" maxlength="11" placeholder="01XXXXXXXXX" dir="ltr" style="text-align:right" autocomplete="tel">
+      <div class="err" id="err"></div>
+      <button class="btn" id="reg" disabled>ابدأ مشوارك</button>
+    </div>
+    <p class="mut" style="text-align:center">بياناتك محفوظة ومش هتسجّل تاني على نفس الجهاز</p>
+    <a href="captain.html" class="mut" style="text-align:center;text-decoration:underline;font-weight:700">🚕 دخول الكابتن</a>
+  </div>
+</section>
+
+<!-- الرئيسية -->
+<section class="scr" id="home">
+  <div class="hd"><div class="row sp"><div class="row"><div class="logo" data-logo></div><b style="font-size:20px">مشوار</b></div><span data-i="bell"></span></div>
+    <h3 style="margin-top:14px" id="hello"></h3><p style="opacity:.85;font-size:14px">رايح فين النهارده؟</p></div>
+  <div class="pad" style="margin-top:-36px"><div class="card" style="padding:8px">
+    <div class="loc act" id="rowP"><span style="color:var(--green)" data-i="pin"></span><div class="t"><div class="mut">نقطة الانتقال</div><input id="pq" class="in" style="padding:6px 8px;font-size:14px;border:0;background:transparent" placeholder="موقعك أو اكتب عنوان" autocomplete="off"></div><span style="color:var(--blue)" data-i="target" id="gps"></span></div>
+    <div class="loc" id="rowD"><span style="color:var(--red)" data-i="pin"></span><div class="t"><div class="mut">الوجهة</div><input id="dq" class="in" style="padding:6px 8px;font-size:14px;border:0;background:transparent" placeholder="اكتب عنوان الوجهة أو اضغط على الخريطة" autocomplete="off"></div><span style="color:var(--blue)" data-i="plus" id="sbtn"></span></div>
+  </div></div>
+  <div id="sug" class="card" style="padding:0;overflow:hidden;margin:8px 16px 0"></div>
+  <div class="pad" style="margin-top:10px"><div class="card" style="padding:12px;display:flex;flex-direction:column;gap:8px">
+    <b style="font-size:14px">🗺️ اختار من خرائط جوجل (الأدق)</b>
+    <div class="row"><button class="btn o" id="gopenP" style="font-size:14px;padding:10px">📍 مكانك</button><button class="btn o" id="gopenD" style="font-size:14px;padding:10px">🏁 الوجهة</button></div>
+    <div class="row"><input class="in" id="glink" dir="ltr" style="text-align:right;font-size:14px;padding:10px" placeholder="الصق لينك المكان هنا" autocomplete="off"><button class="btn" id="gpaste" style="width:auto;padding:10px 16px;font-size:14px;box-shadow:none">لصق</button></div>
+    <div class="mut" id="gmsg" style="font-size:12px">افتح خرائط جوجل، اختار المكان، اضغط مشاركة ← نسخ الرابط، وارجع الصق هنا.</div>
+  </div></div>
+  <div class="mapbox"><div id="map"></div><div class="zm"><b id="zin" data-i="plus"></b><b id="zout" data-i="minus"></b><b id="zloc" data-i="target"></b></div>
+    <div id="cpin" style="display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);z-index:500;pointer-events:none"></div>
+    <button id="cok" class="btn" style="display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:10px;width:auto;padding:8px 22px;font-size:15px;z-index:500">تأكيد المكان</button></div>
+  <div class="hint"><span data-i="pin" style="color:var(--blue)"></span><span id="hint" style="flex:1"></span><button id="onmap" class="tag" style="border:0;background:var(--blue);color:#fff;font-family:inherit;cursor:pointer;white-space:nowrap">حدد على الخريطة</button></div>
+  <div class="pad" style="margin-top:12px"><div class="card" style="display:flex;flex-direction:column;gap:12px">
+    <div class="g"><div><span style="color:var(--blue)" data-i="clock"></span><div class="mut">المدة</div><b id="dur">—</b></div>
+    <div><span style="color:var(--blue)" data-i="route"></span><div class="mut">المسافة</div><b id="dist">—</b></div>
+    <div><span style="color:var(--blue)" data-i="cash"></span><div class="mut">التكلفة</div><b id="fare">—</b></div></div>
+    <div class="row" style="justify-content:center;background:var(--bg);border-radius:14px;padding:10px;font-weight:700;font-size:14px"><span style="color:var(--green)" data-i="cash"></span>الدفع كاش للكابتن عند الوصول</div>
+  </div></div>
+  <div class="pad" style="margin:14px 0 90px"><div class="err" id="oerr" style="margin-bottom:8px;text-align:center"></div><button class="btn" id="order" disabled>اطلب الآن <span data-i="arrow"></span></button></div>
+</section>
+
+<section class="scr center" id="search" style="padding:24px">
+  <div class="pulse"><div class="logo" data-logo style="width:64px;height:64px"></div></div>
+  <h2>بندوّر على الكابتن...</h2><p class="mut">ثواني وهيكون في الطريق ليك</p>
+  <button class="btn o" style="max-width:240px" id="cancel">إلغاء الطلب</button>
+</section>
+
+<section class="scr" id="track">
+  <div class="hd" style="padding-bottom:20px"><div class="row sp"><b style="font-size:19px" id="tstat">الكابتن في الطريق إليك</b><span class="tag" style="background:var(--yellow);color:#12345A" id="teta"></span></div></div>
+  <div class="mapbox"><div id="tmap" style="height:310px"></div></div>
+  <div class="pad" style="margin:14px 0"><div class="card" style="display:flex;flex-direction:column;gap:12px">
+    <div class="row sp" id="tbar" style="background:var(--pale);border-radius:14px;padding:10px 14px"><div><div class="mut" id="tlabel">الكابتن يبعد عنك</div><b id="tdist" style="font-size:20px">...</b></div><div style="text-align:left"><div class="mut">الوصول المتوقع</div><b id="teta2" style="font-size:20px">...</b></div></div>
+    <div class="row"><div class="av" id="tav"></div><div style="flex:1"><b id="tname"></b><div class="mut">★ 4.9 · كابتن مشوار</div></div>
+      <a class="rd" id="tcall" style="background:var(--green);text-decoration:none" data-i="phone"></a></div>
+    <div class="row sp" style="background:var(--bg);border-radius:14px;padding:10px"><div><div class="mut">العربية</div><b id="tcar"></b></div>
+      <div style="background:var(--yellow);color:#12345A;border-radius:8px;padding:4px 10px;font-weight:800" id="tplate"></div></div>
+    <div class="mut" id="tinfo" style="text-align:center;min-height:16px"></div>
+    <div class="row" style="color:var(--green);font-weight:700;font-size:13px"><span data-i="shield"></span>رحلتك مؤمّنة ومتابعة لحظة بلحظة</div>
+    <button class="btn o" id="cancelTrip" style="color:var(--red)">إلغاء الرحلة</button>
+  </div></div>
+</section>
+
+<section class="scr center" id="rate" style="padding:24px">
+  <div style="width:84px;height:84px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center"><span data-i="check" style="transform:scale(1.8)"></span></div>
+  <h2>وصلت بالسلامة!</h2>
+  <div class="card" id="paid" style="width:100%;text-align:right;display:flex;flex-direction:column;gap:6px;font-size:14px"></div>
+  <b>قيّم الكابتن <span id="rname"></span></b><div class="stars" id="stars"></div>
+  <textarea class="in" id="rtxt" rows="3" placeholder="اكتب تعليقك (اختياري)"></textarea>
+  <button class="btn" id="done">إرسال التقييم</button>
+</section>
+
+<section class="scr" id="trips"><div class="hd" style="padding-bottom:24px"><h2>رحلاتي</h2></div>
+  <div class="pad" id="tl" style="display:flex;flex-direction:column;gap:10px;padding-top:14px;padding-bottom:90px"></div></section>
+
+<section class="scr" id="support"><div class="hd" style="padding-bottom:24px"><h2>الدعم والمساعدة</h2></div>
+  <div class="pad" style="padding-top:14px;padding-bottom:90px;display:flex;flex-direction:column;gap:12px">
+    <div class="card"><b>الأسئلة الشائعة</b>
+      <details><summary>إزاي ألغي الرحلة؟</summary><p>اضغط على إلغاء الطلب قبل وصول الكابتن.</p></details>
+      <details><summary>إزاي أحدد مكاني؟</summary><p>اضغط على أيقونة الموقع، أو اضغط على الخريطة، أو اسحب الدبوس.</p></details>
+      <details><summary>إزاي بتتحسب الأجرة؟</summary><p>رسوم وصول الكابتن + المسافة × سعر الكيلو + دقايق الانتظار × سعر الدقيقة.</p></details></div></div></section>
+
+<section class="scr" id="profile"><div class="hd" style="padding-bottom:24px"><div class="row"><div class="av" id="pav"></div><div><h3 id="pname"></h3><span style="opacity:.85;font-size:13px" id="pph"></span></div></div></div>
+  <div class="pad" style="padding-top:14px;padding-bottom:90px;display:flex;flex-direction:column;gap:10px">
+    <div class="card row"><span style="color:var(--green)" data-i="check"></span><b style="flex:1">الحساب مسجّل على قاعدة البيانات</b></div>
+    <button class="btn o" id="instBtn">📲 تثبيت التطبيق على الموبايل</button>
+    <a class="btn o" href="captain.html" style="text-decoration:none">🚕 دخول الكابتن (برقم سري)</a>
+    <button class="btn o" id="logout" style="color:var(--red)">تغيير الحساب</button></div></section>
+
+<div id="inst" class="hide" style="position:absolute;left:12px;right:12px;bottom:84px;z-index:60;background:var(--card);border:1px solid var(--bd);border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.28);padding:14px;display:flex;gap:12px;align-items:center">
+  <img src="icon-192.png" width="48" height="48" alt="" style="border-radius:12px;flex:none">
+  <div style="flex:1;min-width:0"><b id="instTxt" style="font-size:14px;line-height:1.6"></b></div>
+  <div style="display:flex;flex-direction:column;gap:6px;flex:none"><button id="instOk" class="btn" style="padding:8px 14px;font-size:14px;box-shadow:none">تثبيت</button><button id="instNo" class="btn o" style="padding:6px 14px;font-size:12px">مش دلوقتي</button></div>
+</div>
+
+<nav class="nav" id="nav" style="display:none">
+  <button data-t="home" class="on"><span data-i="home"></span>الرئيسية</button>
+  <button data-t="trips"><span data-i="route"></span>الرحلات</button>
+  <button data-t="support"><span data-i="headset"></span>الدعم</button>
+  <button data-t="profile"><span data-i="user"></span>حسابي</button>
+</nav>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+/* ===== إعدادات Supabase (المفتاح العام آمن: الجدول محمي بـ RLS ولا يُكتب إلا عبر دالة register_customer) ===== */
+const SB_URL='https://wxqxsxgktmfqyvsbjruo.supabase.co';
+const SB_KEY='sb_publishable_PUh7gPslTu5eE9_ykekQpg_s1nZ8-N6';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+
+const P={home:"M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10",route:"M6 19a2 2 0 100-4 2 2 0 000 4zM18 9a2 2 0 100-4 2 2 0 000 4zM8 17h7a3 3 0 000-6H9a3 3 0 010-6h7",headset:"M4 14v-2a8 8 0 0116 0v2M4 14h3v5H4zM17 14h3v5h-3z",user:"M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0",pin:"M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11zM12 12a2 2 0 100-4 2 2 0 000 4z",clock:"M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 2",card:"M3 6h18v12H3zM3 10h18",cash:"M2 7h20v10H2zM12 14a2 2 0 100-4 2 2 0 000 4z",phone:"M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z",star:"M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z",arrow:"M19 12H5m6-6l-6 6 6 6",bell:"M6 17V11a6 6 0 0112 0v6l2 2H4zM10 21h4",shield:"M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM8.5 12l2.5 2.5L16 9.5",check:"M5 12l5 5L19 7",plus:"M12 5v14M5 12h14",minus:"M5 12h14",target:"M12 8a4 4 0 100 8 4 4 0 000-8zM12 2v3M12 19v3M2 12h3M19 12h3"};
+const ic=n=>`<svg class="i" viewBox="0 0 24 24"><path d="${P[n]}"/></svg>`;
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
+const logoSVG=`<svg viewBox="0 0 48 48" width="70%" height="70%" fill="none" stroke="#12345A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4a11 11 0 0111 11c0 8-11 17-11 17S13 23 13 15A11 11 0 0124 4z"/><path d="M17 17h14l-2-4h-10z" fill="#12345A"/><path d="M6 36h10M4 41h14M30 40h14"/></svg>`;
+$$('[data-logo]').forEach(e=>e.innerHTML=logoSVG);
+$$('[data-i]').forEach(e=>e.innerHTML=ic(e.dataset.i));
+
+const ls={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+let S=Object.assign({km:8,wait:1.5,pick:15,min:30},ls.get('mw',{}));
+let CU=ls.get('mw_cust',null),pm='cash',W=0,RD={km:0,min:0},addr={pick:'',dest:''};
+const calc=()=>RD.km?Math.max(S.min,Math.round(S.pick+RD.km*S.km+W*S.wait)):0;
+async function loadSettings(){
+  try{
+    const {data,error}=await sb.from('app_settings').select('*').eq('id',1).single();
+    if(error||!data)throw error;
+    S={km:+data.km_price,wait:+data.wait_price,pick:+data.pickup_fee,min:+data.min_fare};
+    ls.set('mw',S);
+  }catch(e){}
+  updInfo();
+}
+
+function show(id){
+  $$('.scr').forEach(s=>s.classList.toggle('on',s.id===id));
+  const tabs=['home','trips','support','profile'];
+  $('#nav').style.display=tabs.includes(id)?'flex':'none';
+  $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===id));
+  $('#'+id).scrollTop=0;
+  if(id==='home'&&map)setTimeout(()=>map.invalidateSize(),50);
+  if(id==='trips')renderTrips();
+}
+$$('#nav button').forEach(b=>b.onclick=()=>show(b.dataset.t));
+
+/* ===== التسجيل ===== */
+const okPh=v=>/^01[0125]\d{8}$/.test(v);
+function chk(){$('#reg').disabled=!($('#nm').value.trim().length>=2&&okPh($('#ph').value))}
+$('#nm').oninput=chk;
+$('#ph').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');chk()};
+$('#reg').onclick=async()=>{
+  const b=$('#reg'),name=$('#nm').value.trim(),phone=$('#ph').value;
+  b.disabled=true;b.textContent='جاري الحفظ...';$('#err').textContent='';
+  try{
+    const {data,error}=await sb.rpc('register_customer',{p_name:name,p_phone:phone});
+    if(error||!data)throw error||new Error('no data');
+    CU={id:data.id,name,phone};ls.set('mw_cust',CU);boot();
+  }catch(e){$('#err').textContent='تعذّر التسجيل، اتأكد من النت وجرّب تاني';}
+  b.textContent='ابدأ مشوارك';chk();
+};
+function boot(){
+  $('#hello').textContent='أهلاً يا '+CU.name.split(' ')[0]+' 👋';
+  $('#pname').textContent=CU.name;$('#pph').textContent=CU.phone;$('#pav').textContent=CU.name.charAt(0);
+  show('home');if(!map)initMap();loadSettings();if(RID)startPoll();
+}
+$('#logout').onclick=()=>{ls.del('mw_cust');CU=null;$('#nm').value='';$('#ph').value='';chk();show('login')};
+
+/* ===== الخريطة ===== */
+let map,tmap,mk={pick:null,dest:null},mode='pick',routeL=null,cm=false;
+const pinIcon=c=>L.divIcon({className:'',html:`<svg viewBox="0 0 24 30" width="34" height="42"><path d="M12 29S2 18 2 11a10 10 0 0120 0c0 7-10 18-10 18z" fill="${c}" stroke="#fff" stroke-width="2"/><circle cx="12" cy="11" r="4" fill="#fff"/></svg>`,iconSize:[34,42],iconAnchor:[17,40]});
+const pinSvg=c=>`<svg viewBox="0 0 24 30" width="34" height="42"><path d="M12 29S2 18 2 11a10 10 0 0120 0c0 7-10 18-10 18z" fill="${c}" stroke="#fff" stroke-width="2"/><circle cx="12" cy="11" r="4" fill="#fff"/></svg>`;
+const tiles=()=>L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'});
+const HINT={pick:'اكتب العنوان، أو اختار من خرائط جوجل، أو اضغط على الخريطة',dest:'اكتب عنوان الوجهة، أو اختار من خرائط جوجل، أو اضغط على الخريطة',done:'تقدر تسحب الدبابيس لتعديل المكان'};
+function setMode(m){mode=m;if(cm)$('#cpin').innerHTML=pinSvg(m==='pick'?'#13B981':'#F04444');$('#rowP').classList.toggle('act',m==='pick');$('#rowD').classList.toggle('act',m==='dest');$('#hint').textContent=(mk.pick&&mk.dest)?HINT.done:HINT[m]}
+function initMap(){
+  map=L.map('map',{zoomControl:false}).setView([30.0444,31.2357],13);
+  tiles().addTo(map);
+  map.on('click',e=>setPoint(mode,e.latlng));
+  $('#zin').onclick=()=>map.zoomIn();$('#zout').onclick=()=>map.zoomOut();
+  $('#zloc').onclick=$('#gps').onclick=e=>{e.stopPropagation();locate()};
+  $('#rowP').onclick=()=>setMode('pick');
+  $('#rowD').onclick=()=>setMode('dest');
+  $('#sbtn').onclick=e=>{e.stopPropagation();searchDest()};
+  $('#dq').onkeydown=e=>{if(e.key==='Enter'){const f=$('#sug .sg');f?f.click():searchDest()}};
+  $('#pq').onkeydown=e=>{if(e.key==='Enter'){const f=$('#sug .sg');if(f)f.click()}};
+  $('#pq').oninput=()=>{typed.pick=true;setMode('pick');suggest('pick')};
+  $('#dq').oninput=()=>{typed.dest=true;setMode('dest');suggest('dest')};
+  $('#pq').onfocus=()=>{setMode('pick');$('#pq').select()};
+  $('#dq').onfocus=()=>{setMode('dest');$('#dq').select()};
+  map.on('click',()=>$('#sug').replaceChildren());
+  $('#gopenP').onclick=()=>openGoogle('pick');$('#gopenD').onclick=()=>openGoogle('dest');
+  $('#glink').oninput=()=>{clearTimeout(gt);gt=setTimeout(()=>applyLink($('#glink').value),350)};
+  $('#gpaste').onclick=async()=>{if(!(await readClip()))gmsg('الصق اللينك يدوي في الخانة',true)};
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&awaiting)readClip()});
+  $('#onmap').onclick=()=>setCM(!cm);
+  $('#cok').onclick=()=>{setPoint(mode,map.getCenter());setCM(false)};
+  setMode('pick');locate();
+}
+function locate(){
+  $('#pq').value='بنحدد موقعك...';
+  if(!navigator.geolocation){$('#pq').value='حدد موقعك على الخريطة';return}
+  navigator.geolocation.getCurrentPosition(p=>{const ll=L.latLng(p.coords.latitude,p.coords.longitude);map.setView(ll,16);setPoint('pick',ll)},
+    ()=>{$('#pq').value='فعّل الموقع أو اضغط على الخريطة';setMode('pick')},{enableHighAccuracy:true,timeout:9000});
+}
+function setCM(on){
+  cm=on;$('#cpin').style.display=on?'block':'none';$('#cok').style.display=on?'block':'none';
+  $('#onmap').textContent=on?'إلغاء':'حدد على الخريطة';
+  if(on){$('#cpin').innerHTML=pinSvg(mode==='pick'?'#13B981':'#F04444');$('#sug').replaceChildren();$('#hint').textContent='حرّك الخريطة لحد ما الدبوس يبقى على المكان، وبعدين اضغط تأكيد';$('#map').scrollIntoView({behavior:'smooth',block:'center'})}
+  else setMode(mode);
+}
+/* ===== اختيار المكان من خرائط جوجل ===== */
+const FN_URL=SB_URL+'/functions/v1/resolve-map-link';
+const ANON_JWT='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4cXhzeGdrdG1mcXl2c2JqcnVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4Mzc5MjAsImV4cCI6MjEwNzQxMzkyMH0.8MKPPSQEoGBxpgPnvcCU5_HbueMtuUhExePwLoeYl18';
+let awaiting=false,gt=null;const typed={pick:false,dest:false};
+const gmsg=(t,bad)=>{const e=$('#gmsg');e.textContent=t;e.style.color=bad?'var(--red)':'var(--mut)'};
+function parseCoords(raw){
+  let t=String(raw||'');try{t=decodeURIComponent(t)}catch(_){}
+  let m,name=null;
+  const pl=t.match(/\/maps\/place\/([^/@?]+)/);
+  if(pl){const n=pl[1].replace(/\+/g,' ').trim();if(n&&!/^-?\d+(\.\d+)?\s*,/.test(n))name=n}
+  const r=(a,b)=>{a=+a;b=+b;return Math.abs(a)<=90&&Math.abs(b)<=180?{lat:a,lng:b,name}:null};
+  if(m=t.match(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/))return r(m[1],m[2]);
+  if(m=t.match(/[?&](?:q|query|ll|destination|daddr|center)=\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/i))return r(m[1],m[2]);
+  if(m=t.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/))return r(m[1],m[2]);
+  if(m=t.match(/^\s*(-?\d{1,2}(?:\.\d+)?)\s*[,،]\s*(-?\d{1,3}(?:\.\d+)?)\s*$/))return r(m[1],m[2]);
+  return null;
+}
+const isMapsLink=t=>/https?:\/\/(maps\.app\.goo\.gl|goo\.gl\/maps|(www\.|maps\.)?google\.[a-z.]+\/maps|maps\.google\.)/i.test(t)||/^\s*-?\d{1,2}(\.\d+)?\s*[,،]\s*-?\d{1,3}(\.\d+)?\s*$/.test(t);
+async function resolveLink(url){
+  try{
+    const r=await fetch(FN_URL,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+ANON_JWT},body:JSON.stringify({url})});
+    if(!r.ok)return null;const j=await r.json();return j&&j.lat!=null?j:null;
+  }catch(e){return null}
+}
+async function applyLink(raw){
+  const t=(raw||'').trim();if(!t)return false;
+  const url=(t.match(/https?:\/\/\S+/)||[t])[0],k=mode;
+  let c=parseCoords(url);
+  if(!c&&/^https?:\/\//i.test(url)&&isMapsLink(url)){gmsg('بنقرأ المكان من اللينك...');c=await resolveLink(url)}
+  if(!c){gmsg('مقدرناش نقرأ المكان. انسخ لينك مكان من خرائط جوجل (مشاركة ← نسخ الرابط) وجرّب تاني',true);return false}
+  const ll=L.latLng(c.lat,c.lng);
+  setPoint(k,ll,c.name||undefined);map.setView(ll,17);
+  $('#glink').value='';awaiting=false;$('#sug').replaceChildren();
+  gmsg('تم تحديد '+(k==='pick'?'نقطة الانتقال':'الوجهة')+' من خرائط جوجل ✔');
+  return true;
+}
+function openGoogle(k){
+  setMode(k);awaiting=true;
+  const q=$(k==='pick'?'#pq':'#dq').value.trim(),ctr=mk[k]?mk[k].getLatLng():map.getCenter();
+  const url=(typed[k]&&q.length>2)?`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`:`https://www.google.com/maps/@${ctr.lat.toFixed(6)},${ctr.lng.toFixed(6)},16z`;
+  gmsg('اختار '+(k==='pick'?'مكانك':'الوجهة')+' في خرائط جوجل، اضغط مشاركة ← نسخ الرابط، وارجع هنا.');
+  window.open(url,'_blank','noopener');
+}
+async function readClip(){
+  try{const t=await navigator.clipboard.readText();if(t&&isMapsLink(t)){$('#glink').value=t;return await applyLink(t)}}catch(e){}
+  return false;
+}
+function setAddr(k,t){typed[k]=false;addr[k]=t;$(k==='pick'?'#pq':'#dq').value=t}
+function setPoint(k,ll,label){
+  if(mk[k])mk[k].setLatLng(ll);
+  else{mk[k]=L.marker(ll,{icon:pinIcon(k==='pick'?'#13B981':'#F04444'),draggable:true}).addTo(map);mk[k].on('dragend',()=>setPoint(k,mk[k].getLatLng()))}
+  label?setAddr(k,label):reverse(k,ll);calcRoute();
+  setMode(k==='pick'&&!mk.dest?'dest':mode);
+  if(k==='dest'&&!mk.pick){setMode('pick');$('#hint').textContent='حدد نقطة الانتقال كمان (اكتب العنوان أو اضغط على الخريطة)'}
+}
+const lbl=(a,fb)=>{
+  if(!a)return fb;
+  const ps=[a.amenity||a.tourism||a.shop||'',a.road||a.pedestrian||a.footway||'',a.suburb||a.quarter||a.neighbourhood||a.city_district||'',a.city||a.town||a.village||a.state_district||a.state||''].filter(Boolean);
+  return [...new Set(ps)].slice(0,3).join('، ')||fb;
+};
+async function reverse(k,ll){
+  const fb=ll.lat.toFixed(4)+' , '+ll.lng.toFixed(4);
+  const set=t=>setAddr(k,t);
+  set('...');
+  try{
+    const j=await fj(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=18&addressdetails=1&accept-language=ar&lat=${ll.lat}&lon=${ll.lng}`);
+    set(lbl(j.address,(j.display_name||'').split(/[،,]\s*/).slice(0,3).join('، ')||fb));
+  }catch(e){set(fb)}
+}
+const hav=(a,b)=>{const R=6371,t=x=>x*Math.PI/180,dl=t(b.lat-a.lat),dg=t(b.lng-a.lng),h=Math.sin(dl/2)**2+Math.cos(t(a.lat))*Math.cos(t(b.lat))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
+async function fj(u,ms=7000){
+  const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);
+  try{const r=await fetch(u,{signal:c.signal});if(!r.ok)throw new Error('HTTP '+r.status);return await r.json()}
+  finally{clearTimeout(t)}
+}
+async function geocode(q){
+  const c=map.getCenter(),enc=encodeURIComponent(q);
+  const jobs=[
+    fj(`https://photon.komoot.io/api/?q=${enc}&limit=10&lat=${c.lat}&lon=${c.lng}`).then(j=>(j.features||[]).filter(x=>String(x.properties.countrycode||'EG').toUpperCase()==='EG').map(x=>{const p=x.properties;
+      return{lat:x.geometry.coordinates[1],lon:x.geometry.coordinates[0],title:p.name||p.street||p.district||p.city||q,
+        sub:[p.name&&p.street?p.street:'',p.district,p.city||p.county,p.state].filter(Boolean).join('، ')}})),
+    fj(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=eg&accept-language=ar&q=${enc}&viewbox=${c.lng-.6},${c.lat+.6},${c.lng+.6},${c.lat-.6}`).then(j=>j.map(x=>{
+      const a=x.address||{},t=x.name||a.road||a.suburb||a.city||(x.display_name||'').split(/[،,]\s*/)[0];
+      return{lat:+x.lat,lon:+x.lon,title:t,sub:lbl({road:a.road&&a.road!==t?a.road:'',suburb:a.suburb||a.quarter||a.neighbourhood||a.city_district,city:a.city||a.town||a.village||a.state_district||a.state},'')}}))
+  ];
+  const res=(await Promise.allSettled(jobs)).filter(r=>r.status==='fulfilled');
+  if(!res.length)throw new Error('geocoders unavailable');
+  const seen=new Set(),out=[];
+  for(const x of res.flatMap(r=>r.value)){const key=(+x.lat).toFixed(3)+','+(+x.lon).toFixed(3);if(seen.has(key))continue;seen.add(key);out.push(x)}
+  const ql=q.toLowerCase(),m=x=>x.title.toLowerCase().includes(ql)?0:1;
+  out.sort((a,b)=>(m(a)-m(b))||(hav({lat:a.lat,lng:a.lon},c)-hav({lat:b.lat,lng:b.lon},c)));
+  return out.slice(0,8);
+}
+let st,sseq=0;
+function sugMsg(t){const d=document.createElement('div');d.className='mut';d.style.padding='12px';d.textContent=t;$('#sug').replaceChildren(d)}
+function suggest(k){
+  clearTimeout(st);const q=$(k==='pick'?'#pq':'#dq').value.trim();
+  if(q.length<2){$('#sug').replaceChildren();return}
+  st=setTimeout(async()=>{
+    const my=++sseq;sugMsg('بندوّر...');
+    try{const r=await geocode(q);if(my!==sseq)return;renderSug(k,r)}
+    catch(e){console.warn(e);if(my===sseq)sugMsg('تعذّر الوصول لخدمة البحث، اضغط على الخريطة لتحديد المكان')}
+  },450);
+}
+function pickResult(k,x){
+  const ll=L.latLng(x.lat,x.lon);$('#sug').replaceChildren();setMode(k);
+  setPoint(k,ll,[x.title,(x.sub||'').split('، ')[0]].filter(Boolean).join('، '));
+  if(!(mk.pick&&mk.dest))map.setView(ll,17);
+  $('#map').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function renderSug(k,list){
+  const box=$('#sug');box.replaceChildren();
+  if(!list.length){sugMsg('مالقيناش نتايج، جرّب كلمات تانية أو اضغط على الخريطة');return}
+  list.forEach(x=>{
+    const b=document.createElement('button'),sp=document.createElement('span'),t=document.createElement('b'),m=document.createElement('small');
+    b.className='sg';b.innerHTML=ic('pin');t.textContent=x.title;m.textContent=x.sub||'';sp.append(t,m);b.append(sp);
+    b.onclick=()=>pickResult(k,x);box.append(b);
+  });
+}
+async function searchDest(){
+  const q=$('#dq').value.trim();if(!q)return;
+  try{const r=await geocode(q);if(r.length)pickResult('dest',r[0]);else $('#hint').textContent='مالقيناش المكان ده، جرّب اسم تاني أو اضغط على الخريطة'}
+  catch(e){$('#hint').textContent='تعذّر الوصول لخدمة البحث، اضغط على الخريطة'}
+}
+let rseq=0;
+async function calcRoute(){
+  if(!mk.pick||!mk.dest){updInfo();return}
+  const my=++rseq,a=mk.pick.getLatLng(),b=mk.dest.getLatLng();let km,min,pts=null;
+  RD={km:0,min:0};$('#dist').textContent=$('#dur').textContent=$('#fare').textContent='...';$('#order').disabled=true;
+  try{
+    const j=await fj(`https://router.project-osrm.org/route/v1/driving/${a.lng},${a.lat};${b.lng},${b.lat}?overview=full&geometries=geojson`,7000);
+    const rt=j.routes[0];km=rt.distance/1000;min=rt.duration/60;pts=rt.geometry.coordinates.map(c=>[c[1],c[0]]);
+  }catch(e){console.warn('osrm failed',e);km=hav(a,b)*1.3;min=km/30*60}
+  if(my!==rseq)return;
+  if(routeL)map.removeLayer(routeL);
+  routeL=L.polyline(pts||[a,b],{color:'#0878F9',weight:5,opacity:.9}).addTo(map);
+  map.fitBounds(routeL.getBounds(),{padding:[40,40]});
+  RD={km:Math.max(.1,Math.round(km*10)/10),min:Math.max(1,Math.round(min))};updInfo();
+}
+function updInfo(){
+  const has=RD.km&&mk.pick&&mk.dest;
+  $('#dist').textContent=has?RD.km+' كم':'—';$('#dur').textContent=has?RD.min+' دقيقة':'—';
+  $('#fare').textContent=has?calc()+' ج.م':'—';$('#order').disabled=!has;
+}
+
+/* ===== الطلب والتتبع ===== */
+/* ===== الطلب والتتبع (عبر قاعدة البيانات) ===== */
+let RID=ls.get('mw_ride',null),RATE_ID=null,poll=null,lastSt=null,trackBuilt=false,drv=null;
+const stopPoll=()=>{clearInterval(poll);poll=null};
+const ERR={busy:'كل الكباتن مشغولين في رحلات دلوقتي، جرّب بعد شوية',already_open:'عندك رحلة شغالة بالفعل',offline:'الكابتن مش متاح حالياً، جرّب بعد شوية',no_customer:'بياناتك مش موجودة، من حسابي اختار تغيير الحساب وسجّل تاني',bad_input:'بيانات الرحلة مش مظبوطة، حدد الأماكن تاني'};
+$('#order').onclick=async()=>{
+  $('#oerr').textContent='';$('#order').disabled=true;
+  await loadSettings();
+  const a=mk.pick.getLatLng(),d=mk.dest.getLatLng();
+  try{
+    const {data,error}=await sb.rpc('create_ride',{p_customer:CU.id,p_plat:a.lat,p_plng:a.lng,p_paddr:addr.pick,p_dlat:d.lat,p_dlng:d.lng,p_daddr:addr.dest,p_km:RD.km,p_min:RD.min,p_pay:pm});
+    if(error)throw error;
+    if(data.status==='ok'){RID=data.ride_id;ls.set('mw_ride',RID);lastSt='searching';trackBuilt=false;show('search');startPoll();return}
+    $('#oerr').textContent=ERR[data.status]||'حصل خطأ، جرّب تاني';
+  }catch(e){console.warn(e);$('#oerr').textContent='تعذّر إرسال الطلب، اتأكد من النت'}
+  updInfo();
+};
+function startPoll(){
+  stopPoll();
+  const run=async()=>{try{const {data}=await sb.rpc('get_ride',{p_ride:RID,p_customer:CU.id});if(data)onRide(data);else endRide()}catch(e){console.warn(e)}};
+  run();poll=setInterval(run,3000);
+}
+function endRide(msg){stopPoll();RID=null;ls.del('mw_ride');lastSt=null;trackBuilt=false;if(msg)$('#oerr').textContent=msg;show('home');updInfo()}
+async function cancelRide(){try{await sb.rpc('cancel_ride',{p_ride:RID,p_customer:CU.id})}catch(e){}endRide()}
+$('#cancel').onclick=cancelRide;
+$('#cancelTrip').onclick=()=>{if(confirm('تلغي الرحلة؟'))cancelRide()};
+function fillCaptain(c){$('#tname').textContent=c.name;$('#rname').textContent=c.name;$('#tcar').textContent=c.car;$('#tplate').textContent=c.plate;$('#tav').textContent=(c.name||'?').charAt(0);$('#tcall').href='tel:'+c.phone}
+let tLine=null,lastQ={t:0,key:'',from:null},qseq=0,RI=null,followed=false,LV=null;
+const carIcon=()=>L.divIcon({className:'',html:'<div style="font-size:30px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))">🚕</div>',iconSize:[32,32],iconAnchor:[16,16]});
+function buildTrack(r){
+  const a=L.latLng(r.pickup_lat,r.pickup_lng),b=L.latLng(r.dest_lat,r.dest_lng);
+  if(!tmap){tmap=L.map('tmap',{zoomControl:false});tiles().addTo(tmap)}
+  tmap.eachLayer(l=>{if(!l._url)tmap.removeLayer(l)});
+  L.marker(a,{icon:pinIcon('#13B981')}).addTo(tmap);L.marker(b,{icon:pinIcon('#F04444')}).addTo(tmap);
+  tLine=L.polyline([a,b],{color:'#0878F9',weight:4,dashArray:'8 8'}).addTo(tmap);
+  drv=null;RI=null;followed=false;lastQ={t:0,key:'',from:null};
+  tmap.invalidateSize();tmap.fitBounds(L.latLngBounds([a,b]),{padding:[40,40]});trackBuilt=true;
+}
+const fmtKm=km=>km<1?Math.max(10,Math.round(km*100)*10)+' متر':(Math.round(km*10)/10)+' كم';
+const fmtMin=m=>m<=1?'أقل من دقيقة':Math.round(m)+' دقيقة';
+function glide(m,to,ms){
+  const from=m.getLatLng(),t0=performance.now();
+  cancelAnimationFrame(m._raf);
+  const step=t=>{const k=Math.min(1,(t-t0)/ms);m.setLatLng(L.latLng(from.lat+(to.lat-from.lat)*k,from.lng+(to.lng-from.lng)*k));if(k<1)m._raf=requestAnimationFrame(step)};
+  m._raf=requestAnimationFrame(step);
+}
+async function updRoute(from,to,key){
+  const now=Date.now(),moved=lastQ.from?hav(lastQ.from,from):9;
+  if(lastQ.key===key&&(now-lastQ.t<4000||(now-lastQ.t<12000&&moved<.15)))return;
+  lastQ={t:now,from,key};const my=++qseq;
+  let km,min,pts=null;
+  try{
+    const j=await fj(`https://router.project-osrm.org/route/v1/driving/${from.lng},${from.lat};${to.lng},${to.lat}?overview=full&geometries=geojson`,6000);
+    const rt=j.routes[0];km=rt.distance/1000;min=rt.duration/60;pts=rt.geometry.coordinates.map(c=>[c[1],c[0]]);
+  }catch(e){km=hav(from,to)*1.3;min=km/30*60}
+  if(my!==qseq||!trackBuilt)return;
+  RI={km,min,h0:Math.max(hav(from,to),.05),key};
+  if(tLine)tmap.removeLayer(tLine);
+  tLine=L.polyline(pts||[from,to],pts?{color:'#0878F9',weight:5,opacity:.9}:{color:'#0878F9',weight:4,dashArray:'8 8'}).addTo(tmap);
+  if(LV&&LV[0]===key)showDist(LV[0],LV[1],LV[2]);
+}
+function showDist(st,cur,to){
+  if(st==='arrived'){$('#tlabel').textContent='الكابتن وصل';$('#tdist').textContent='عندك ✔';$('#teta2').textContent='—';$('#teta').textContent='وصل';return}
+  $('#tlabel').textContent=st==='in_trip'?'باقي على الوجهة':'الكابتن يبعد عنك';
+  if(!cur){$('#tdist').textContent='...';$('#teta2').textContent='...';$('#teta').textContent='بنحدد موقع الكابتن';return}
+  if(!RI||RI.key!==st){$('#tdist').textContent='...';$('#teta2').textContent='...';return}
+  const ratio=Math.min(1.3,hav(cur,to)/RI.h0),km=RI.km*ratio,min=RI.min*ratio;
+  $('#tdist').textContent=fmtKm(km);$('#teta2').textContent=fmtMin(min);
+  $('#teta').textContent=(st==='in_trip'?'توصل خلال ':'يوصلك خلال ')+fmtMin(min);
+}
+function onRide(r){
+  const st=r.status,cap=r.captain||{};
+  if(st==='searching'){if(!$('#search').classList.contains('on'))show('search');lastSt=st;return}
+  if(st==='cancelled'){endRide(lastSt==='searching'?'مفيش كابتن قبل الطلب دلوقتي، جرّب تاني بعد شوية':'الرحلة اتلغت');return}
+  if(st==='completed'){finish(r);return}
+  fillCaptain(cap);
+  if(!$('#track').classList.contains('on')){show('track');trackBuilt=false}
+  if(!trackBuilt)setTimeout(()=>{if(!trackBuilt&&RID){buildTrack(r);onRide(r)}},80);
+  lastSt=st;
+  $('#tstat').textContent={accepted:'الكابتن في الطريق إليك',arrived:'الكابتن وصل ✔',in_trip:'الرحلة شغالة'}[st];
+  $('#cancelTrip').style.display=st==='in_trip'?'none':'flex';
+  const cur=cap.lat!=null?{lat:cap.lat,lng:cap.lng}:null;
+  const target=st==='in_trip'?{lat:r.dest_lat,lng:r.dest_lng}:{lat:r.pickup_lat,lng:r.pickup_lng};
+  if(trackBuilt&&cur){
+    const ll=L.latLng(cur.lat,cur.lng);
+    if(!drv)drv=L.marker(ll,{icon:carIcon()}).addTo(tmap);else glide(drv,ll,2800);
+    if(st!=='arrived')updRoute(cur,target,st);
+    if(!followed||!tmap.getBounds().contains(ll)){followed=true;tmap.fitBounds(L.latLngBounds([ll,L.latLng(target.lat,target.lng)]),{padding:[50,50],maxZoom:17})}
+  }
+  LV=[st,cur,target];showDist(st,cur,target);
+  $('#tinfo').textContent=st==='arrived'?'الانتظار بيتحسب '+r.wait_price+' ج.م للدقيقة بعد بدء الرحلة':'';
+}
+function finish(r){
+  stopPoll();ls.del('mw_ride');RATE_ID=RID;RID=null;lastSt=null;trackBuilt=false;
+  const b=r.breakdown||{},R=n=>Math.round(n*100)/100;
+  const rows=[['وصول الكابتن إليك',+b.pickup||0],['المسافة '+r.distance_km+' كم × '+b.km_price,r.distance_km*b.km_price],['انتظار '+r.wait_min+' د × '+b.wait_price,r.wait_min*b.wait_price]];
+  const sum=rows.reduce((t,x)=>t+x[1],0);
+  if(r.fare>sum+.5)rows.push(['تعديل للحد الأدنى للرحلة',r.fare-sum]);
+  $('#paid').innerHTML=rows.map(x=>`<div class="row sp"><span>${x[0]}</span><b>${R(x[1])} ج.م</b></div>`).join('')+`<div class="row sp" style="border-top:1px solid var(--bd);padding-top:6px"><b>الإجمالي (كاش)</b><b style="color:var(--blue);font-size:18px">${r.fare} ج.م</b></div>`;
+  const t=ls.get('mw_trips',[]);t.unshift({to:r.dest_addr||'وجهة',date:new Date().toLocaleDateString('ar-EG',{day:'numeric',month:'long'}),fare:r.fare,pay:r.pay_method});ls.set('mw_trips',t.slice(0,30));
+  show('rate');
+}
+$('#stars').innerHTML=[1,2,3,4,5].map(n=>ic('star').replace('class="i"',`class="i" data-n="${n}"`)).join('');
+$('#stars').onclick=e=>{const s=e.target.closest('svg');if(!s)return;$$('#stars svg').forEach((x,i)=>x.classList.toggle('on',i<+s.dataset.n))};
+$('#done').onclick=async()=>{
+  const n=$$('#stars svg.on').length;
+  if(n&&RATE_ID){try{await sb.rpc('rate_ride',{p_ride:RATE_ID,p_customer:CU.id,p_rating:n,p_review:$('#rtxt').value})}catch(e){}}
+  RATE_ID=null;$('#rtxt').value='';$$('#stars svg').forEach(x=>x.classList.remove('on'));updInfo();show('home');
+};
+function renderTrips(){
+  const t=ls.get('mw_trips',[]);
+  $('#tl').innerHTML=t.length?t.map(x=>`<div class="card row"><span style="color:var(--red)">${ic('pin')}</span><div style="flex:1;min-width:0"><b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" class="tt"></b><div class="mut">${x.date}</div></div><div style="text-align:left"><b>${x.fare} ج.م</b><div class="mut">كاش</div></div></div>`).join(''):'<div class="card mut" style="text-align:center;padding:30px">لسه معملتش أي رحلة</div>';
+  $$('#tl .tt').forEach((e,i)=>e.textContent=t[i].to||'وجهة');
+}
+
+/* ===== تثبيت التطبيق على الموبايل (PWA) ===== */
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+(function(){
+  const KEY='mw_inst_seen_c';
+  const seen=()=>{try{return localStorage.getItem(KEY)}catch(e){return null}},mark=()=>{try{localStorage.setItem(KEY,'1')}catch(e){}};
+  const standalone=()=>{try{return (window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true}catch(e){return false}};
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  let dip=null;
+  const box=document.getElementById('inst'),txt=document.getElementById('instTxt'),ok=document.getElementById('instOk'),no=document.getElementById('instNo');
+  const hideB=()=>box.classList.add('hide');
+  function show(){
+    if(standalone()||seen())return;
+    if(dip){txt.textContent='ثبّت مشوار على موبايلك وافتحه من الأيقونة في أي وقت';ok.textContent='تثبيت';ok.style.display=''}
+    else if(ios){txt.textContent='لتثبيت مشوار: اضغط زر المشاركة ⬆️ ثم «إضافة إلى الشاشة الرئيسية»';ok.textContent='تمام';ok.style.display=''}
+    else return;
+    box.classList.remove('hide');
+  }
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dip=e;show()});
+  window.addEventListener('appinstalled',()=>{mark();hideB();dip=null});
+  ok.onclick=async()=>{
+    if(dip){try{dip.prompt();await dip.userChoice}catch(e){}dip=null}
+    mark();hideB();
+  };
+  no.onclick=()=>{mark();hideB()};
+  if(ios)setTimeout(show,2500);
+  window.mwInstall=async()=>{
+    if(standalone()){alert('التطبيق متثبّت بالفعل على موبايلك ✔');return}
+    if(dip){try{dip.prompt();await dip.userChoice}catch(e){}dip=null;return}
+    alert(ios?'اضغط زر المشاركة ⬆️ ثم «إضافة إلى الشاشة الرئيسية»':'افتح قائمة المتصفح ⋮ واختار «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية»');
+  };
+  const b=document.getElementById('instBtn');if(b){if(standalone())b.style.display='none';else b.onclick=e=>{e.preventDefault();window.mwInstall()}}
+})();
+
+/* ===== التشغيل ===== */
+setTimeout(()=>CU?boot():show('login'),1700);
+</script>
+</body>
+</html>
