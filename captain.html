@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>مشوار – الكابتن</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12345A">
+<link rel="manifest" href="captain.webmanifest">
+<link rel="apple-touch-icon" href="icon-captain-180.png">
+<link rel="icon" type="image/png" href="icon-captain-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="كابتن مشوار">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#0878F9;--navy:#12345A;--yellow:#FFC928;--bg:#F4F7FB;--card:#fff;--bd:#E4EBF4;--green:#13B981;--red:#F04444;--mut:#7B8CA3;--pale:#FFF6D9}
+@media (prefers-color-scheme:dark){:root{--bg:#0B1A2E;--card:#12253F;--bd:#223859;--navy:#EAF1FB;--mut:#8DA2BF;--pale:#3A3112}}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--bg);font-family:'Cairo',Tahoma,Arial,sans-serif;color:var(--navy);display:flex;justify-content:center}
+#app{width:100%;max-width:430px;min-height:100%;padding:env(safe-area-inset-top,0px) 0 calc(24px + env(safe-area-inset-bottom,0px))}
+.hd{background:linear-gradient(160deg,#12345A,#0B2340);color:#fff;padding:16px 18px 26px;border-radius:0 0 28px 28px}
+.row{display:flex;align-items:center;gap:10px}.sp{justify-content:space-between}
+.logo{width:42px;height:42px;border-radius:13px;background:var(--yellow);display:grid;place-items:center}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:16px;box-shadow:0 6px 18px rgba(18,52,90,.07)}
+.pad{padding:0 16px}
+.btn{width:100%;border:0;border-radius:18px;background:var(--yellow);color:#12345A;font:800 18px Cairo,sans-serif;padding:15px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 16px rgba(255,201,40,.4);cursor:pointer;text-decoration:none}
+.btn:active{transform:scale(.97)}.btn:disabled{opacity:.5}
+.btn.o{background:var(--card);border:1.5px solid var(--bd);box-shadow:none;color:var(--navy)}
+.btn.g{background:var(--green);color:#fff;box-shadow:none}
+.btn.r{background:var(--card);border:1.5px solid var(--red);color:var(--red);box-shadow:none}
+.in{width:100%;border:1.5px solid var(--bd);background:var(--bg);border-radius:14px;padding:13px;font:600 18px Cairo,sans-serif;color:var(--navy);outline:0;text-align:center;letter-spacing:6px}
+.mut{color:var(--mut);font-size:13px}
+.err{color:var(--red);font-weight:700;font-size:13px;min-height:18px;text-align:center}
+.sw{width:64px;height:34px;border-radius:99px;background:#5b6e88;position:relative;border:0;cursor:pointer;flex:none;transition:.2s}
+.sw::after{content:'';position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;background:#fff;transition:.2s}
+.sw.on{background:var(--green)}.sw.on::after{right:34px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.pt{display:flex;gap:10px;align-items:flex-start}
+.dot{width:14px;height:14px;border-radius:50%;margin-top:5px;flex:none}
+.big{font-size:30px;font-weight:800}
+.pulse{width:96px;height:96px;border-radius:50%;background:rgba(19,185,129,.15);display:grid;place-items:center;margin:0 auto;animation:p 1.6s infinite}
+@keyframes p{0%{box-shadow:0 0 0 0 rgba(19,185,129,.4)}100%{box-shadow:0 0 0 40px rgba(19,185,129,0)}}
+.ring{animation:ring 1s infinite}
+@keyframes ring{50%{box-shadow:0 0 0 6px rgba(255,201,40,.55)}}
+.tag{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.hide{display:none!important}
+.in2{width:100%;border:1.5px solid var(--bd);background:var(--bg);border-radius:14px;padding:11px;font:600 15px Cairo,sans-serif;color:var(--navy);outline:0}
+details.cap{border:1px solid var(--bd);border-radius:16px;padding:12px;background:var(--card)}details.cap summary{cursor:pointer;list-style:none}
+label.mut{display:block;margin-bottom:-6px}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- دخول الكابتن -->
+<section id="login" class="hide">
+  <div class="hd"><div class="row"><div class="logo" id="lg"></div><b style="font-size:22px">مشوار – الكابتن</b></div><p style="margin-top:16px;opacity:.85">اكتب رقم موبايلك ورمزك السري عشان تستقبل الرحلات</p></div>
+  <div class="pad stack" style="margin-top:-12px">
+    <div class="card stack"><input class="in" id="phone" type="tel" inputmode="numeric" maxlength="11" placeholder="رقم موبايلك" dir="ltr" style="letter-spacing:2px"><input class="in" id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="••••••" dir="ltr">
+      <div class="err" id="lerr"></div><button class="btn" id="enter">دخول</button></div>
+    <a href="index.html" class="mut" style="text-align:center;text-decoration:underline;font-weight:700">← الصفحة الرئيسية</a>
+  </div>
+</section>
+
+<!-- الشاشة الرئيسية -->
+<section id="main" class="hide">
+  <div class="hd"><div class="row sp"><div class="row"><div class="logo" id="lg2"></div><div><b style="font-size:19px" id="hello">أهلاً يا كابتن</b><div style="font-size:13px;opacity:.85" id="stt">غير متاح</div></div></div>
+    <div class="row"><span style="font-size:13px" id="swl">متاح</span><button class="sw" id="sw" aria-label="متاح"></button></div></div></div>
+  <div class="pad stack" style="margin-top:-12px" id="body"></div>
+  <div class="pad" style="margin-top:18px;display:flex;gap:10px"><button class="btn o hide" id="adm" style="font-size:14px;padding:10px">⚙️ الإدارة</button><button class="btn o" id="chpin" style="font-size:14px;padding:10px">تغيير الرمز</button><button class="btn o" id="out" style="font-size:14px;padding:10px;color:var(--red)">خروج</button></div>
+  <p style="text-align:center;margin-top:12px"><a href="index.html" class="mut" style="text-decoration:underline;font-weight:700">← الصفحة الرئيسية</a></p>
+  <p style="text-align:center;margin-top:8px"><a href="#" id="instBtn" class="mut" style="text-decoration:underline;font-weight:700">📲 تثبيت التطبيق على الموبايل</a></p>
+  <p class="mut" style="text-align:center;margin-top:12px;padding:0 16px">سيب الصفحة مفتوحة والشاشة شغالة عشان توصلك الطلبات</p>
+</section>
+
+<div id="inst" class="hide" style="position:absolute;left:12px;right:12px;bottom:16px;z-index:60;background:var(--card);border:1px solid var(--bd);border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.28);padding:14px;display:flex;gap:12px;align-items:center">
+  <img src="icon-captain-192.png" width="48" height="48" alt="" style="border-radius:12px;flex:none">
+  <div style="flex:1;min-width:0"><b id="instTxt" style="font-size:14px;line-height:1.6"></b></div>
+  <div style="display:flex;flex-direction:column;gap:6px;flex:none"><button id="instOk" class="btn" style="padding:8px 14px;font-size:14px;box-shadow:none">تثبيت</button><button id="instNo" class="btn o" style="padding:6px 14px;font-size:12px">مش دلوقتي</button></div>
+</div>
+
+<!-- لوحة الإدارة (للأدمن فقط) -->
+<section id="admin" class="hide">
+  <div class="hd"><div class="row sp"><b style="font-size:20px">⚙️ لوحة الإدارة</b><button class="btn o" id="aback" style="width:auto;padding:8px 16px;font-size:14px">رجوع</button></div></div>
+  <div class="pad stack" style="margin-top:-12px">
+    <div class="card hide" id="admbar" style="background:var(--pale);border-color:var(--yellow);text-align:center"><b>🔔 عندك رحلة أو طلب جديد</b><button class="btn" id="abk" style="margin-top:8px;padding:10px;font-size:15px">افتح الرحلة</button></div>
+    <div class="card stack"><b>التسعيرة (بالجنيه)</b>
+      <label class="mut">سعر الكيلومتر</label><input class="in2" id="p_km" type="number" min="0" step="0.5" inputmode="decimal">
+      <label class="mut">سعر دقيقة الانتظار</label><input class="in2" id="p_wait" type="number" min="0" step="0.5" inputmode="decimal">
+      <label class="mut">رسوم انتقال الكابتن للعميل</label><input class="in2" id="p_pick" type="number" min="0" step="1" inputmode="decimal">
+      <label class="mut">الحد الأدنى للرحلة</label><input class="in2" id="p_min" type="number" min="0" step="1" inputmode="decimal">
+      <div class="err" id="perr"></div><button class="btn" id="psave" style="font-size:16px;padding:12px">حفظ الأسعار</button></div>
+    <div class="card stack"><b>الكباتن</b><div id="clist" class="stack"></div></div>
+    <div class="card stack"><b>إضافة كابتن جديد</b>
+      <label class="mut">الاسم</label><input class="in2" id="n_name">
+      <label class="mut">رقم الموبايل (هيدخل بيه)</label><input class="in2" id="n_phone" type="tel" inputmode="numeric" maxlength="11" dir="ltr" style="text-align:right" placeholder="01XXXXXXXXX">
+      <label class="mut">العربية</label><input class="in2" id="n_car">
+      <label class="mut">رقم اللوحة</label><input class="in2" id="n_plate">
+      <label class="mut">الرمز السري (4 أرقام أو أكتر)</label><input class="in2" id="n_pin" type="password" inputmode="numeric" autocomplete="off" dir="ltr" style="text-align:right">
+      <div class="err" id="nerr"></div><button class="btn" id="cadd" style="font-size:16px;padding:12px">إضافة الكابتن</button></div>
+  </div>
+</section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const sb=supabase.createClient('https://wxqxsxgktmfqyvsbjruo.supabase.co','sb_publishable_PUh7gPslTu5eE9_ykekQpg_s1nZ8-N6');
+const $=s=>document.querySelector(s);
+const logo=`<svg viewBox="0 0 48 48" width="70%" height="70%" fill="none" stroke="#12345A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4a11 11 0 0111 11c0 8-11 17-11 17S13 23 13 15A11 11 0 0124 4z"/><path d="M17 17h14l-2-4h-10z" fill="#12345A"/><path d="M6 36h10M4 41h14M30 40h14"/></svg>`;
+$('#lg').innerHTML=$('#lg2').innerHTML=logo;
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+
+let PIN=ls.get('mw_cap_pin'),PHONE=ls.get('mw_cap_phone'),ME=null,view='main',online=false,pos=null,timer=null,offset=0,ride=null,seen=new Set(),alarm=null,actx=null,wake=null,busy=false,done=null;
+
+/* ===== دخول ===== */
+function ui(){$('#login').classList.toggle('hide',!!PIN);$('#main').classList.toggle('hide',!PIN||view==='admin');$('#admin').classList.toggle('hide',!PIN||view!=='admin')}
+$('#enter').onclick=async()=>{
+  const ph=$('#phone').value.trim(),p=$('#pin').value.trim();if(!ph||!p)return;
+  $('#lerr').textContent='';$('#enter').disabled=true;
+  const r=await poll(ph,p,null);
+  $('#enter').disabled=false;
+  if(r&&r.status==='ok'){PIN=p;PHONE=ph;ls.set('mw_cap_pin',p);ls.set('mw_cap_phone',ph);$('#pin').value='';view='main';ui();start()}
+  else $('#lerr').textContent={bad_pin:'الرقم أو الرمز غلط',locked:'اتقفل 5 دقايق بسبب محاولات غلط',inactive:'حسابك موقوف، كلّم الإدارة'}[r&&r.status]||'تعذّر الاتصال، اتأكد من النت';
+};
+$('#out').onclick=async()=>{if(!confirm('تخرج؟ هتبقى غير متاح لاستقبال الرحلات'))return;if(!ride)await poll(PHONE,PIN,false);ls.del('mw_cap_pin');PIN=null;view='main';clearInterval(timer);stopAlarm();ui()};
+$('#chpin').onclick=async()=>{
+  const n=prompt('اكتب الرمز الجديد (4 أرقام على الأقل)');if(!n)return;
+  const {data}=await sb.rpc('captain_set_pin',{p_phone:PHONE,p_old:PIN,p_new:n});
+  if(data==='ok'){PIN=n;ls.set('mw_cap_pin',n);alert('تم تغيير الرمز')}else alert(data==='too_short'?'الرمز قصير':'تعذّر التغيير');
+};
+
+/* ===== الاتصال بالقاعدة ===== */
+async function poll(phone,pin,wantOnline){
+  try{
+    const {data,error}=await sb.rpc('captain_poll',{p_phone:phone,p_pin:pin,p_lat:pos?pos.lat:null,p_lng:pos?pos.lng:null,p_online:wantOnline});
+    if(error)throw error;return data;
+  }catch(e){console.warn(e);return null}
+}
+async function tick(want=null){
+  if(busy)return;busy=true;
+  const r=await poll(PHONE,PIN,want);busy=false;
+  if(!r){$('#stt').textContent='لا يوجد اتصال...';return}
+  if(r.status!=='ok'){if(r.status==='bad_pin'||r.status==='inactive'){if(r.status==='inactive')alert('حسابك موقوف');ls.del('mw_cap_pin');PIN=null;view='main';stopAlarm();ui()}return}
+  ME=r.me;if(ME){$('#hello').textContent='أهلاً يا '+ME.name.split(' ')[0];$('#adm').classList.toggle('hide',!ME.is_admin)}
+  offset=new Date(r.server_now).getTime()-Date.now();
+  online=r.online;ride=r.ride;
+  render();
+}
+function start(){
+  clearInterval(timer);tick();timer=setInterval(()=>tick(),3000);
+  if('geolocation' in navigator)navigator.geolocation.watchPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude}},()=>{},{enableHighAccuracy:true,maximumAge:5000});
+}
+$('#sw').onclick=async()=>{
+  initAudio();if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();
+  if(ride&&online){alert('عندك رحلة شغالة، خلّصها الأول');return}
+  await tick(!online);
+  try{if(online&&'wakeLock' in navigator)wake=await navigator.wakeLock.request('screen');else if(wake){wake.release();wake=null}}catch(e){}
+};
+document.addEventListener('visibilitychange',async()=>{if(!document.hidden&&online&&'wakeLock' in navigator){try{wake=await navigator.wakeLock.request('screen')}catch(e){}}});
+
+/* ===== تنبيه صوتي ===== */
+function initAudio(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(e){}}
+function beep(){
+  if(!actx)return;
+  [880,1100,880].forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;o.connect(g);g.connect(actx.destination);
+    const t=actx.currentTime+i*.22;g.gain.setValueAtTime(.35,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.start(t);o.stop(t+.2)});
+  if(navigator.vibrate)navigator.vibrate([300,120,300]);
+}
+function startAlarm(){if(alarm)return;beep();alarm=setInterval(beep,1800)}
+function stopAlarm(){clearInterval(alarm);alarm=null}
+function notify(t){try{if('Notification' in window&&Notification.permission==='granted')new Notification('مشوار',{body:t,tag:'ride',requireInteraction:true})}catch(e){}}
+
+/* ===== العرض ===== */
+const nav=(lat,lng)=>`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+const mmss=ms=>{const s=Math.max(0,Math.floor(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+function el(html){const d=document.createElement('div');d.innerHTML=html;return d.firstElementChild}
+function esc(t){const d=document.createElement('div');d.textContent=t==null?'':String(t);return d.innerHTML}
+const hav=(a,b)=>{const R=6371,t=x=>x*Math.PI/180,dl=t(b.lat-a.lat),dg=t(b.lng-a.lng),h=Math.sin(dl/2)**2+Math.cos(t(a.lat))*Math.cos(t(b.lat))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
+const fk=k=>k<1?Math.round(k*100)*10+' متر':(Math.round(k*10)/10)+' كم';
+function render(){
+  $('#admbar').classList.toggle('hide',!ride);
+  $('#sw').classList.toggle('on',online);$('#swl').textContent=online?'متاح':'غير متاح';
+  const b=$('#body');b.replaceChildren();
+  document.title=ride&&ride.status==='searching'?'🔔 طلب جديد!':'مشوار – الكابتن';
+  if(done){
+    b.append(el(`<div class="card stack" style="text-align:center"><div class="big" style="color:var(--green)">${esc(done.fare)} ج.م</div><b>الرحلة خلصت ✔</b><div class="mut">حصّل المبلغ كاش من العميل · انتظار ${esc(done.wait_min)} دقيقة</div><button class="btn" id="ok">تمام</button></div>`));
+    $('#ok').onclick=()=>{done=null;render()};stopAlarm();$('#stt').textContent='خلّصت رحلة';return;
+  }
+  if(!ride){
+    stopAlarm();
+    $('#stt').textContent=online?'متاح لاستقبال الرحلات':'غير متاح';
+    b.append(el(online?`<div class="card stack" style="text-align:center"><div class="pulse"><span style="font-size:38px">🚕</span></div><b style="font-size:18px">مستني طلبات...</b><span class="mut">هيجيلك تنبيه صوتي أول ما حد يطلب</span></div>`
+      :`<div class="card stack" style="text-align:center"><span style="font-size:40px">😴</span><b style="font-size:18px">إنت غير متاح</b><span class="mut">فعّل زر "متاح" عشان تستقبل رحلات. العملاء مش هيقدروا يطلبوك وإنت غير متاح.</span></div>`));
+    return;
+  }
+  const r=ride,st=r.status;
+  const info=`<div class="card stack">
+    <div class="row sp"><div><b style="font-size:18px">${esc(r.customer_name)}</b><div class="mut" dir="ltr" style="text-align:right">${esc(r.customer_phone)}</div></div>
+      <a class="btn g" style="width:auto;padding:10px 16px;font-size:15px" href="tel:${esc(r.customer_phone)}">📞 اتصل</a></div>
+    <div class="pt"><span class="dot" style="background:var(--green)"></span><div><div class="mut">نقطة الانتقال</div><b>${esc(r.pickup_addr)||'—'}</b></div></div>
+    <div class="pt"><span class="dot" style="background:var(--red)"></span><div><div class="mut">الوجهة</div><b>${esc(r.dest_addr)||'—'}</b></div></div>
+    <div class="row sp" style="background:var(--bg);border-radius:14px;padding:10px"><div><div class="mut">المسافة</div><b>${esc(r.distance_km)} كم</b></div><div><div class="mut">التقدير</div><b>${esc(r.est_fare)} ج.م</b></div><div><div class="mut">الدفع</div><b>كاش</b></div></div></div>`;
+  if(st==='searching'){
+    const left=Math.max(0,120-Math.floor((Date.now()+offset-new Date(r.created_at).getTime())/1000));
+    $('#stt').textContent='طلب جديد!';
+    if(!seen.has(r.id)){seen.add(r.id);notify('طلب رحلة جديد من '+r.customer_name)}
+    startAlarm();
+    const c=el(`<div class="stack"><div class="card ring" style="text-align:center;background:var(--pale);border-color:var(--yellow)"><b style="font-size:20px">🔔 طلب رحلة جديد</b><div class="mut">الطلب هينتهي خلال ${left} ثانية</div></div>${info}
+      <button class="btn" id="acc">قبول الرحلة</button><button class="btn r" id="rej">رفض</button></div>`);
+    b.append(c);$('#acc').onclick=()=>act('accept');$('#rej').onclick=()=>act('reject');return;
+  }
+  stopAlarm();
+  if(st==='accepted'){
+    $('#stt').textContent='في الطريق للعميل';
+    b.append(el(`<div class="stack">${info}<div class="card" style="text-align:center"><span class="mut">المسافة للعميل تقريباً</span> <b style="font-size:18px">${pos?fk(hav(pos,{lat:r.pickup_lat,lng:r.pickup_lng})*1.3):'بنحدد موقعك...'}</b></div><a class="btn o" target="_blank" rel="noopener" href="${nav(r.pickup_lat,r.pickup_lng)}">🧭 افتح الملاحة للعميل</a><button class="btn g" id="arr">وصلت للعميل</button><button class="btn r" id="can">إلغاء الرحلة</button></div>`));
+    $('#arr').onclick=()=>act('arrived');$('#can').onclick=()=>{if(confirm('تلغي الرحلة؟'))act('cancel')};return;
+  }
+  if(st==='arrived'){
+    $('#stt').textContent='مستني العميل';
+    const t=el(`<div class="stack">${info}<div class="card" style="text-align:center"><div class="mut">وقت الانتظار</div><div class="big" id="wt">00:00</div></div><button class="btn" id="go">بدء الرحلة</button><button class="btn r" id="can">إلغاء الرحلة</button></div>`);
+    b.append(t);const upd=()=>{const w=$('#wt');if(w&&ride&&ride.arrived_at)w.textContent=mmss(Date.now()+offset-new Date(ride.arrived_at).getTime())};upd();
+    $('#go').onclick=()=>act('start');$('#can').onclick=()=>{if(confirm('تلغي الرحلة؟'))act('cancel')};return;
+  }
+  if(st==='in_trip'){
+    $('#stt').textContent='الرحلة شغالة';
+    b.append(el(`<div class="stack">${info}<a class="btn o" target="_blank" rel="noopener" href="${nav(r.dest_lat,r.dest_lng)}">🧭 افتح الملاحة للوجهة</a><button class="btn" id="fin">إنهاء الرحلة</button></div>`));
+    $('#fin').onclick=()=>{if(confirm('وصلت للوجهة وتنهي الرحلة؟'))act('complete')};
+  }
+}
+setInterval(()=>{const w=$('#wt');if(w&&ride&&ride.arrived_at)w.textContent=mmss(Date.now()+offset-new Date(ride.arrived_at).getTime())},1000);
+async function act(a){
+  initAudio();stopAlarm();document.querySelectorAll('#body button').forEach(b=>b.disabled=true);
+  try{
+    const {data,error}=await sb.rpc('captain_action',{p_phone:PHONE,p_pin:PIN,p_ride:ride.id,p_action:a});
+    if(error)throw error;
+    if(data.status==='ok'&&a==='complete')done=data;
+    else if(data.status==='invalid_state')alert('الرحلة اتغيّرت (اتاخدت من كابتن تاني أو اتلغت)');
+  }catch(e){alert('تعذّر تنفيذ العملية، اتأكد من النت')}
+  tick();
+}
+
+/* ===== لوحة الإدارة ===== */
+const MSG={bad_pin:'الرمز غلط',locked:'اتقفل مؤقتاً',forbidden:'مش مسموح لك',inactive:'الحساب موقوف',bad_input:'البيانات مش صحيحة (الاسم، رقم موبايل مصري 11 رقم، رمز 4 أرقام+)',duplicate:'الرقم ده مسجّل قبل كده',not_found:'مش موجود',has_active_ride:'الكابتن في رحلة دلوقتي',cannot_disable_admin:'مينفعش توقف الأدمن'};
+const say=(id,t,ok)=>{const e=$(id);e.textContent=t;e.style.color=ok?'var(--green)':'var(--red)'};
+function showView(v){view=v;ui();if(v==='admin')loadAdmin();window.scrollTo(0,0)}
+$('#adm').onclick=()=>showView('admin');$('#aback').onclick=()=>showView('main');$('#abk').onclick=()=>showView('main');
+async function loadAdmin(){
+  try{const {data}=await sb.from('app_settings').select('*').eq('id',1).single();
+    if(data){$('#p_km').value=data.km_price;$('#p_wait').value=data.wait_price;$('#p_pick').value=data.pickup_fee;$('#p_min').value=data.min_fare}}catch(e){}
+  const box=$('#clist');box.textContent='...';
+  let res;try{res=(await sb.rpc('admin_list_captains',{p_phone:PHONE,p_pin:PIN})).data}catch(e){}
+  if(!res||res.status!=='ok'){box.textContent=MSG[res&&res.status]||'تعذّر تحميل الكباتن';return}
+  box.replaceChildren();
+  res.captains.forEach(c=>{
+    const d=document.createElement('details');d.className='cap';
+    d.innerHTML=`<summary><div class="row sp"><b class="nm"></b><span><span class="tag st"></span>${c.is_admin?' <span class="tag" style="background:var(--yellow);color:#12345A">أدمن</span>':''}</span></div><div class="mut meta" style="margin-top:4px"></div></summary>
+      <div class="stack" style="margin-top:12px">
+        <label class="mut">الاسم</label><input class="in2 f-name">
+        <label class="mut">رقم الموبايل (للدخول)</label><input class="in2 f-phone" dir="ltr" inputmode="numeric" maxlength="11" style="text-align:right">
+        <label class="mut">العربية</label><input class="in2 f-car">
+        <label class="mut">رقم اللوحة</label><input class="in2 f-plate">
+        <label class="mut">رمز جديد (اختياري)</label><input class="in2 f-pin" type="password" inputmode="numeric" autocomplete="off" dir="ltr" style="text-align:right">
+        ${c.is_admin?'':'<label class="row" style="gap:8px"><input type="checkbox" class="f-act"> <b>الحساب مفعّل</b></label>'}
+        <div class="err f-err"></div><button class="btn f-save" style="font-size:15px;padding:10px">حفظ</button></div>`;
+    const g=q=>d.querySelector(q);
+    g('.nm').textContent=c.name;
+    const st=g('.st'),stt=!c.active?['موقوف','var(--red)']:c.busy?['في رحلة','var(--blue)']:c.online?['متاح','var(--green)']:['غير متاح','var(--mut)'];
+    st.textContent=stt[0];st.style.cssText='background:'+stt[1]+';color:#fff';
+    g('.meta').textContent=[c.phone,[c.car,c.plate].filter(Boolean).join(' '),c.trips+' رحلة',c.rating?'★ '+c.rating:''].filter(Boolean).join(' · ');
+    g('.f-name').value=c.name;g('.f-phone').value=c.phone;g('.f-car').value=c.car;g('.f-plate').value=c.plate;
+    if(g('.f-act'))g('.f-act').checked=c.active;
+    g('.f-save').onclick=async()=>{
+      const np=g('.f-pin').value,ph=g('.f-phone').value.trim();g('.f-err').textContent='';
+      let r;try{r=(await sb.rpc('admin_update_captain',{p_phone:PHONE,p_pin:PIN,p_id:c.id,p_name:g('.f-name').value,p_cphone:ph,p_car:g('.f-car').value,p_plate:g('.f-plate').value,p_active:g('.f-act')?g('.f-act').checked:true,p_new_pin:np||null})).data}catch(e){}
+      if(r==='ok'){
+        if(c.phone===PHONE){PHONE=ph;ls.set('mw_cap_phone',ph);if(np.length>=4){PIN=np;ls.set('mw_cap_pin',np)}}
+        loadAdmin();
+      }else g('.f-err').textContent=MSG[r]||'تعذّر الحفظ';
+    };
+    box.append(d);
+  });
+}
+$('#psave').onclick=async()=>{
+  const g=k=>Math.max(0,+$('#p_'+k).value||0);let r;
+  try{r=(await sb.rpc('admin_update_settings',{p_phone:PHONE,p_pin:PIN,p_km:g('km'),p_wait:g('wait'),p_pick:g('pick'),p_min:g('min')})).data}catch(e){}
+  r==='ok'?say('#perr','تم حفظ الأسعار ✔ (بتظهر للعملاء فوراً)',true):say('#perr',MSG[r]||'تعذّر الحفظ');
+};
+$('#cadd').onclick=async()=>{
+  let r;try{r=(await sb.rpc('admin_add_captain',{p_phone:PHONE,p_pin:PIN,p_name:$('#n_name').value,p_cphone:$('#n_phone').value.trim(),p_car:$('#n_car').value,p_plate:$('#n_plate').value,p_new_pin:$('#n_pin').value})).data}catch(e){}
+  if(r==='ok'){say('#nerr','تمت إضافة الكابتن ✔',true);['name','phone','car','plate','pin'].forEach(k=>$('#n_'+k).value='');loadAdmin()}
+  else say('#nerr',MSG[r]||'تعذّر الإضافة');
+};
+
+/* ===== تثبيت التطبيق على الموبايل (PWA) ===== */
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+(function(){
+  const KEY='mw_inst_seen_k';
+  const seen=()=>{try{return localStorage.getItem(KEY)}catch(e){return null}},mark=()=>{try{localStorage.setItem(KEY,'1')}catch(e){}};
+  const standalone=()=>{try{return (window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true}catch(e){return false}};
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  let dip=null;
+  const box=document.getElementById('inst'),txt=document.getElementById('instTxt'),ok=document.getElementById('instOk'),no=document.getElementById('instNo');
+  const hideB=()=>box.classList.add('hide');
+  function show(){
+    if(standalone()||seen())return;
+    if(dip){txt.textContent='ثبّت مشوار على موبايلك وافتحه من الأيقونة في أي وقت';ok.textContent='تثبيت';ok.style.display=''}
+    else if(ios){txt.textContent='لتثبيت مشوار: اضغط زر المشاركة ⬆️ ثم «إضافة إلى الشاشة الرئيسية»';ok.textContent='تمام';ok.style.display=''}
+    else return;
+    box.classList.remove('hide');
+  }
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dip=e;show()});
+  window.addEventListener('appinstalled',()=>{mark();hideB();dip=null});
+  ok.onclick=async()=>{
+    if(dip){try{dip.prompt();await dip.userChoice}catch(e){}dip=null}
+    mark();hideB();
+  };
+  no.onclick=()=>{mark();hideB()};
+  if(ios)setTimeout(show,2500);
+  window.mwInstall=async()=>{
+    if(standalone()){alert('التطبيق متثبّت بالفعل على موبايلك ✔');return}
+    if(dip){try{dip.prompt();await dip.userChoice}catch(e){}dip=null;return}
+    alert(ios?'اضغط زر المشاركة ⬆️ ثم «إضافة إلى الشاشة الرئيسية»':'افتح قائمة المتصفح ⋮ واختار «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية»');
+  };
+  const b=document.getElementById('instBtn');if(b){if(standalone())b.style.display='none';else b.onclick=e=>{e.preventDefault();window.mwInstall()}}
+})();
+
+/* ===== التشغيل ===== */
+$('#phone').value=PHONE||'';ui();if(PIN){initAudio();start()}
+document.addEventListener('click',initAudio,{once:true});
+</script>
+</body>
+</html>
